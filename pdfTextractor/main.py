@@ -4,7 +4,11 @@ import fitz
 import random
 from pprint import pprint
 
-label_dict = {  '0':  'Caption',
+from BoundingBox import BoundingBox
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LABEL_DICT = {  '0':  'Caption',
                 '1':  'Footnote',
                 '2':  'Formula',
                 '3':  'List-item',
@@ -48,7 +52,7 @@ def main():
             y_c = float(y0)
             half_w = float(w)
             half_h = float(h)
-            label = label_dict[label_key]
+            label = LABEL_DICT[label_key]
                             
             bb_x0 = page_width*(x_c-half_w)
             bb_x1 = page_width*(x_c+half_w)
