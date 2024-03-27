@@ -1,0 +1,1311 @@
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+I
+V
+E
+E
+W
+R
+S
+E
+Review in Advance first posted online
+on June 28, 2013. (Changes may
+still occur before final publication  
+online and in print.)
+I
+C
+N
+N
+A
+A
+V
+D
+On the Biological Success
+of Viruses
+Brian R. Wasik and Paul E. Turner
+Department of Ecology and Evolutionary Biology, Yale University, New Haven,
+Connecticut 06520-8106; email: brian.wasik@yale.edu, paul.turner@yale.edu
+Annu. Rev. Microbiol. 2013. 67:519–41
+Keywords
+The Annual Review of Microbiology is online at
+micro.annualreviews.org
+adaptation, biodiversity, environmental change, evolvability, extinction,
+robustness
+This article’s doi:
+10.1146/annurev-micro-090110-102833
+Abstract
+Copyright c⃝ 2013 by Annual Reviews.
+All rights reserved
+Are viruses more biologically successful than cellular life? Here we exam-
+ine many ways of gauging biological success, including numerical abun-
+dance, environmental tolerance, type biodiversity, reproductive potential,
+and widespread impact on other organisms. We especially focus on suc-
+cessful ability to evolutionarily adapt in the face of environmental change.
+Viruses are often challenged by dynamic environments, such as host immune
+function and evolved resistance as well as abiotic fluctuations in temperature,
+moisture, and other stressors that reduce virion stability. Despite these chal-
+lenges, our experimental evolution studies show that viruses can often readily
+adapt, and novel virus emergence in humans and other hosts is increasingly
+problematic. We additionally consider whether viruses are advantaged in
+evolvability—the capacity to evolve—and in avoidance of extinction. On the
+basis of these different ways of gauging biological success, we conclude that
+viruses are the most successful inhabitants of the biosphere.
+519
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Contents
+INTRODUCTION. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 520
+PART I: WHAT CONSTITUTES BIOLOGICAL SUCCESS? . . . . . . . . . . . . . . . . . . . . 520
+Viral Abundance. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 521
+Viral Biodiversity . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 522
+PART II: WHY ARE VIRUSES SO SUCCESSFUL? . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 524
+PART III: ADAPTATION AND EVOLVABILITY. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 526
+Biotic and Abiotic Challenges Faced by Viruses . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 528
+Can Viruses Adapt to Cope with Environmental Change? . . . . . . . . . . . . . . . . . . . . . . . . 529
+Are Viruses More Evolvable than Cellular Life? . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 532
+Can Viruses Better Avoid Extinction?. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 535
+CONCLUSION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 536
+INTRODUCTION
+Ain’t you hungry for success, success, success, success? Does it matter?
+—The Rolling Stones, Shattered (1978)
+Are viruses the most successful inhabitants of the biosphere? Our contention is the affirmative,
+and the goal of this article is to similarly convince the reader. The evidence we present is manifold.
+Viruses are ubiquitous, outnumbering cellular organisms and seemingly occupying every possible
+environmental niche that can support life. Although primarily submicroscopic, this viral multitude
+presents extreme biodiversity, with differing morphologies, varying strategies of host infection,
+and all known types of nucleic acids for genetic inheritance across generations. Perhaps most
+impressively, viruses appear very capable of adapting in the face of environmental changes; they can
+often evolve to overcome host resistance and immunity and may also prevail despite environmental
+perturbations experienced outside of their hosts. The repercussions of this adaptability extend
+beyond the viral world. Owing to the prevalence of virus-host interactions, viruses can strongly
+impact which host types dominate populations and communities, in turn affecting all levels of
+biological organization, from host-genome composition to ecosystem function. On the basis of
+many different ways of gauging biological success, we provide overwhelming evidence that viruses
+are extremely successful at what they do: continually evolving in order to harness cellular life to
+replicate and produce more viruses.
+PART I: WHAT CONSTITUTES BIOLOGICAL SUCCESS?
+Biodiversity:
+the estimated variety
+of species or genetic
+types of organisms
+Can it be argued, however, that viruses are the most successful inhabitants of our planet? Biolog-
+ical success is an old concept, predating the discovery of viruses around the turn of the twentieth
+century. In the mid-1800s and before, Charles Darwin (20) and earlier evolution thinkers tried to
+make sense of how and why some biological types persisted in nature, whereas others did not. What
+constitutes biological success? Most broadly, biological success has been discussed historically in
+terms of comparisons between groups of organisms, at taxonomic or nontaxonomic levels above
+that of species. For example, flowering plants—the angiosperms—are often touted as more suc-
+cessful than their nonflowering counterparts—the gymnosperms—because flowering plants show
+greater species diversity. But relative biodiversity is merely one metric for gauging the biological
+520
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Evolvability: the
+capacity of a
+population to evolve
+via natural selection
+Extinction: the
+disappearance of a
+population or species,
+causing reduced
+biodiversity
+Natural selection:
+the process of genetic
+change in a
+population, whereby
+variants advantaged in
+survival and/or
+reproduction increase
+in frequency
+success of groups, and other bases for comparison exist; if ability to thrive in cold temperatures and
+nutrient-poor soils are the measures, gymnosperms instead are the more impressive land plants.
+Thus, in examining whether viruses are more biologically successful than Earth’s other inhabitants,
+we take care to consider many different means for comparison, rather than a single one.
+Here we examine the biological success of viruses, using metrics that include numerical abun-
+dance, environmental tolerance, biodiversity, reproductive potential and efficiency, and modes
+of genetic inheritance. However, our greatest focus is on viral adaptability in the face of various
+biotic and abiotic environmental changes; we draw heavily from our own empirical studies with
+RNA viruses. In addition, we consider metrics that are admittedly very difficult to assess, such
+as relative evolvability and persistence in the face of extinction. Judging by the evidence amassed
+from these different means for comparison, our contention is that on average viruses are indeed
+the most successful group of biological entities on the planet.
+What is the utility of determining whether viruses are more successful than other organismal
+groups, which essentially means all of cellular life? If biological success is an ill-defined term, for
+which no consensus exists for making comparisons, is it even useful to spend time and energy
+examining this idea? Viruses are not composed of cells and therefore are not typically consid-
+ered alongside other biological entities, for example, when building the universal tree of life
+(18). This omission is due to a dichotomy between fundamental body plans; a virus is generally
+composed of nucleic acid surrounded by a protein shell (capsid), whereas cellular life consists of
+ribosome-encoding organisms (64). However, viruses and cellular organisms both play by the same
+evolutionary rules: the processes of spontaneous mutation, natural selection, genetic drift, etc.,
+that underlie the evolutionary patterns described by phylogenetic inference. This commonality
+indicates that a straight-up comparison is legitimate and potentially highly useful. The relative
+simplicity of viral genomes and life cycles provides tractable opportunities to understand how
+evolution proceeds in response to selective challenges. Therefore, by understanding how viruses
+achieve biological success—especially through adaptive evolution—we can infer by extension what
+promotes versus limits biological success in all evolving systems.
+Viral Abundance
+If sheer abundance were the only criterion for defining biological success, the argument would be
+over; viruses are estimated to easily outnumber all forms of cellular life combined. This comparison
+begins by considering the eubacteria, which are extremely ancient, having appeared roughly 3 to
+4 billion years ago. Bacteria are not only ancient but also highly numerous, often achieving large
+population sizes in the wide variety of niches than can support metabolizing organisms; overall,
+bacteria number perhaps 1030 individuals at any one time across the planet (91). However, the
+vast majority of studies that relate bacterial numbers to those of bacteria-specific viruses (the
+bacteriophages) show that phages are numerically superior (7). In particular, surveys from aquatic
+environments (especially the oceans) demonstrate that viruses tend to exceed their unicellular hosts
+by at least an order of magnitude (6, 39, 74). Thus, just counting the phages in the virosphere,
+perhaps 1031–1032 individual viral particles exist on the planet at any one moment (39).
+We are unaware of any similar attempts to compare viral numbers with those of their archaeal
+and eukaryotic hosts. However, one recent study employed pyrosequencing and bioinformatics
+methods to examine the DNA of viruses found in raw-sewage samples from around the world
+(14). Although this approach did not allow for numerical estimates of viral types, the study clearly
+showed that phages are more abundant than viruses of eukaryotes. The study also found that a huge
+variety of viruses remain unclassified, with no genetic match to characterized viruses described
+in genetic databases. These results exemplify the fact that the vast majority of viruses remain to
+www.annualreviews.org • On the Biological Success of Viruses
+521
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+be discovered, and they reinforce the notion that our understanding of the virosphere is woefully
+incomplete. Only greater sampling and surveillance of natural ecosystems can ultimately remedy
+this shortcoming. Nevertheless, these studies indicate the awesome numerical abundance of viruses
+on Earth and support the conclusion that they are numerically dominant in the biosphere.
+Viral Biodiversity
+One alternative means to gauge the biological success of viruses is to consider their known biodi-
+versity. Earth contains a wide variety of potential habitats (available niches) that life can occupy.
+On the one hand, evolution of phenotypic plasticity can allow a single species to inhabit multiple
+varied niches. On the other hand, organisms can evolve to be highly niche specific, as shown by the
+process of adaptive radiation, in which a group of related species has evolved to occupy different
+niches. Viruses lean more toward the latter example. As a group, viruses appear to be composed of
+myriad species that occupy different ecological niche spaces, largely defined by the specific host(s)
+that provides a suitable environment for viral replication.
+Viruses infect host species throughout all major branches of the cellular tree of life
+(61) (Figure 1). This means viruses share those terrestrial and aquatic environmental niches
+that support cellular life around the globe. This biological success extends to virus-host interac-
+tions in environments with extreme temperature and pH and with low oxygen and available light.
+Because so much of viral diversity remains unknown, the fundamental natural history of viruses is
+a very active area within virology. A prime example is the discovery and description of viruses that
+specifically infect archaeal hosts (archaeal phage); the often unique morphologies of these viruses
+have warranted naming of new viral families (Figure 1), which may constitute fertile territory for
+taxonomic discovery in viruses in the foreseeable future (60). These recent archaeal phage discov-
+eries include the first described RNA viruses of archaea and a virus that intriguingly contains a
+“hybrid” genome of both RNA and DNA viral origins, not observed in any other virus to date (10,
+27). Furthermore, the recent discovery of large viruses has overturned the old assumption that all
+viruses are submicroscopic. Rather, mimiviruses rival in size the smallest known cellular life, such
+as Mycoplasma bacteria (63). Undoubtedly, future discoveries will continue to identify novel viral
+families, greatly expanding their already impressive biodiversity.
+Across known viral families, viruses present exceedingly diverse morphologies, ranging from
+icosahedrons, to rod-like filamentous particles, to sack-like structures (61) (Figure 1). Aside from
+this structural diversity, viruses feature a diversity of genetic options for inheritance across gen-
+erations that is simply not present in cellular life. All cellular organisms rely foremost on double-
+stranded DNA as the nucleic acid that dictates phenotypic traits and cross-generational inheri-
+tance. In contrast, viruses show all possible genetic options, with genetic inheritance determined
+by double- and single-stranded DNA and RNA, depending on the viral family. These different
+inheritance strategies are used to define viruses under the Baltimore classification system, which
+distinguishes viruses by the replicative strategy that ultimately creates the viral mRNA translated
+by the host cell (4). Interestingly, these genetic options generally align with the morphological
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−→
+Figure 1
+The families of double-stranded DNA viruses associated with the three domains of life. The viral families
+listed are approved by the International Committee on Taxonomy of Viruses, and the schematic
+representations of virions (not drawn to scale) are presented as in Reference 33. Proposed families are shown
+in quotation marks. Abbreviations: SH1, Haloarcula hispanica virus 1; STIV, Sulfolobus turreted icosahedral
+virus. Modified with permission from Reference 61.
+522
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Corticoviridae
+Tectiviridae
+Plasmaviridae
+Bacteria
+Podoviridae
+Siphoviridae
+Myoviridae
+?
+Siphoviridae
+Euryarchaea
+Myoviridae
+Salterprovirus
+Unclassified (Fuselloviridae?)
+SH1
+Rudiviridae
+Lipothrixviridae
+Archaea
+Guttaviridae
+“Globuloviridae”
+“Ampullaviridae”
+“Bicaudaviridae”
+Fuselloviridae
+Crenarchaea
+STIV
+Nimaviridae
+Baculoviridae
+Ascoviridae
+Polydnaviridae
+Herpesviridae
+Adenoviridae
+Eukarya
+Polyomaviridae, Papillomaviridae
+Poxviridae
+Asfarviridae
+Mimiviridae
+Iridoviridae
+Phycodnaviridae
+www.annualreviews.org • On the Biological Success of Viruses
+523
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+delimitation of viruses—the classic method used to name viral families, overseen by the Interna-
+tional Committee on Virus Taxonomy. Clearly, viruses are more successful than cellular life when
+it comes to evolved genetic options for cross-generational inheritance, and the morphological
+diversity of viruses is vast despite their submicroscopic size.
+PART II: WHY ARE VIRUSES SO SUCCESSFUL?
+Adaptation: the
+process by which a
+population evolves via
+natural selection to
+gain new or modified
+traits that improve
+fitness
+Viruses numerically dominate the biosphere, and even though the full extent of viral biodiversity
+has yet to be discovered, it is clear that they are exceedingly biodiverse. If these are reasonable
+metrics for gauging biological success, we can then ask: Why are viruses so successful? Compared
+with other biological systems, viruses show an amazing capacity to produce large numbers of
+progeny in a short period of time, a capacity that contributes to observations of their global
+densities. This efficiency can be considered from a conservation of energy standpoint, because viral
+reproduction exclusively utilizes the metabolic energy generated by cellular life. In addition, the
+efficiency is appreciable from an economy of scale standpoint, because the genetic architectures
+of viral genomes tend to be highly streamlined in terms of gene number, overlapping reading
+frames, and modularity. Moreover, the biological success of viruses must relate to adaptation
+via natural selection, as this proximately determines whether a population thrives in the event
+of inevitable environmental change, and ultimately dictates extent of biodiversity. In this section
+and the next, we consider the many mechanistic reasons why viruses are biologically successful,
+particularly their ability to adapt in the face of environmental challenges.
+Many cellular organisms can produce very large numbers of offspring in a single generation,
+especially if their mode of reproduction is asexual. In viruses, reproduction is strictly asexual, yet
+these microbes are arguably the reproductive champions among biological populations. A single
+viral particle can infect a cell and harness the host’s metabolism to drive replication and create
+hundreds or thousands of viral progeny in under an hour (3). In general, the mode of genome
+replication inside the host cell facilitates these very large numbers. Often, viral replication cycles
+occur via efficient genetic mechanisms, such as rolling circle replication and stamping machine
+replication (one template virus used to replicate all progeny genomes in the cell), that can create
+very large numbers of genomes off of a single template. From a population size standpoint, consider
+the ability of HIV to achieve extremely high titers (viremia) in the blood of a newly infected human:
+Roughly 5 × 103 infectious virions or 1 × 107 viral RNA units are present in every milliliter of
+plasma during the acute phase of HIV infection (37) (Figure 2). The high viral loads experienced
+by infected multicellular hosts are often central to the debilitating effects of viral disease. This can
+occur either because the rampant viral reproduction directly destroys vital tissues and organs or,
+in the case of HIV, because the high viral load destroys precious immune system cells, eventually
+leaving the host vulnerable to opportunistic infection by other pathogens.
+Allorganismsoccasionallyexperiencesomesortofresourcelimitation,whetherofaconsumable
+resource or, for example, of space to grow or access to mates. Evolutionary biology concerns
+competition between individuals for limiting resources, with the expectation that selection will
+favor the variants that most efficiently use available resources. For this reason, selection should
+tend to push organisms to harness the energy provided by others: Why waste your own energy on
+reproduction if you can evolve a means to have some other organism provide that energy for you?
+This constant challenge to obtain limited resources has been used to explain why parasitism
+seems to be the dominant evolved lifestyle on our planet (62). Viruses represent the pinnacle of
+selfish efficiency, because they are biological entities that dispense entirely with harnessing their
+own resources to make energy for reproduction. Rather, they harness the metabolism of host
+cells, diverting their hosts’ energy away from normal cellular functions and toward production of
+524
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Phase:
+Acute
+Chronic
+AIDS
+1,000
+106
+800
+105
+600
+104
+400
+103
+200
+CD4 T-cell count
+(cells per cubic mm of blood)
+Viral load
+(HIV RNA copies per ml of plasma)
+0
+11
+6
+12
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9 10
+102
+Weeks
+Years
+Time since infection
+Figure 2
+The general pattern of progression in an untreated HIV infection. An untreated HIV infection typically has
+three phases. During the acute phase, the viral load (red ) spikes and the host may show general symptoms of
+a viral infection. During the largely asymptomatic chronic phase, the host mobilizes an immune response
+that fails to halt viral replication. During the AIDS phase, the viral load climbs again as cells of the immune
+system, especially CD4 T cells (blue), are destroyed. Modified with permission from Reference 37. Copyright
+c⃝ 2004 Pearson Prentice Hall, Inc.
+viral particles instead. Because viruses are much less complex than cellular life, this energy can
+be efficiently used to make viral genomes and proteins, compared with the larger reserves needed
+for cellular DNA replication, protein synthesis, lipid biosynthesis, energy (ATP) synthesis, etc.
+Virusescanthusmechanisticallyoutcompeteahostcellforresourceswithinthecellitself.Although
+the energy used to make viral progeny should be much less than that used to maintain cellular
+homeostasis, viruses have evolved diverse mechanisms that promote their own replication and
+protein synthesis while suppressing normal host function (89). These include cap-independent
+mechanisms (e.g., IRES) as well as specific modulation/sequestration of host protein synthesis
+cofactors (5). Although the thermodynamics of viral replication may give viruses a slight edge over
+the house, selection is not above giving them the means to further rig the game in their favor.
+The efficiency of viruses is also reflected by the structure of their genomes. Like most genetic
+systems, viruses can experience recombination in which genes or cassettes of genes are swapped
+between individuals. In addition, viruses seem capable of evolving highly mosaic genomes, in
+which some portions of the genome derive from distantly related or completely unrelated viruses.
+One example is the identical RNA polymerase shared by the families Cystoviridae (RNA phages)
+and Reoviridae (viruses that infect eukaryotic hosts) (6). These observations show that viruses that
+are selected under very different circumstances may sometimes recombine, and selection will then
+presumably favor hybrid variants in which a large portion of the genome is summarily replaced. It
+is unclear how often these events occur in nature, but they certainly blur the distinctions between
+viruses and challenge our ability to accurately resolve deep nodes in viral phylogenetics. This
+modularityof viral genomes creates thepossibility for efficient origin of new genome combinations,
+and further work is needed to determine how much it may contribute to the generation of viral
+biodiversity.
+Viruses have evolved diverse solutions to maximizing efficiency in their genetic carrying capac-
+ity. Whereas more complex cellular organisms have been afforded some relaxation in genome size,
+viruses remain specifically constrained by selection to reduce nonessential genomic elements. The
+result is a broad array of genomic architectures in the larger known virome. One example is the
+www.annualreviews.org • On the Biological Success of Viruses
+525
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+employment of overlapping reading frames (41). Increasing the carrying capacity of the genome
+allows viruses to increase their success through an economy of size.
+The efficiency of viruses is also reflected by the multifunctionality sometimes observed for
+virally encoded proteins, particularly in the case of RNA viruses that are constrained in genome
+size. A single viral gene product can encode proteins with a diverse set of functions during the
+viral replication cycle. One example is the matrix protein of vesicular stomatitis virus (VSV), an
+arthropod-borne virus (arbovirus) in the negative-strand RNA virus family Rhabdoviridae. The
+VSV matrix protein functions both in structural organization and as a modulator of host macro-
+molecular function (1, 8). In terms of efficient genomic architecture, many viruses encode their
+gene products in single open reading frames, resulting in a large polyprotein that is posttranslation-
+ally cleaved into specific subunits. In the Togaviridae, a family of positive-strand RNA arboviruses,
+the nonstructural polyprotein is uniquely functional at different stages of cleavage (Figure 3). The
+release of the polymerase subunit (nsP4) allows for complement-genome synthesis. However, fur-
+ther processing of the polyprotein P123 into its respective subunits is necessary for complete
+genome replication and subgenomic transcription (22, 46, 69, 76). Here, evolution has shaped the
+genomic architecture and the temporality of gene product function to regulate the larger process
+of viral gene expression. These various mechanisms hint at the many ways in which viruses have
+successfully evolved to overcome the limitations of using a small genome to achieve myriad and
+complex functions.
+PART III: ADAPTATION AND EVOLVABILITY
+Adaptation is the process by which a population is naturally selected to evolve new or modified
+traits, which allow individuals in the population to better meet challenges posed by their current
+environment. A different but related phenomenon is evolvability, which is the capacity to evolve
+via natural selection; a population may be relatively advantaged over other populations in its ability
+to adapt in the face of environmental change.
+Both adaptation and evolvability are fundamentally important processes, because the vast ma-
+jority of organisms seem to thrive in environments that are dynamic, rather than static, through
+time. These fluctuating conditions make it likely that individuals will encounter some degree of
+environmental change during their lifetimes and that most biological populations will be routinely
+challenged to adapt. Many organisms are additionally challenged because they are incapable of
+choosing the environment where they reside, causing them to experience different environments
+across space. For example, microbes may be passively moved via air, water, etc., causing them to
+frequently encounter environments where they may be poorly suited to survive and/or reproduce.
+In general, organisms’ inability to distinguish suitable habitats from unsuitable ones (or their
+susceptibility to passive movement between such environments) may cause them to enter an
+ecological trap, defined as an environment that is poor in quality for survival/reproduction and that
+prevents population sustainability (i.e., births that exceed deaths). The incapability of microbes
+to distinguish good-quality habitats from ecological traps will contribute to local extinctions.
+One example is that viruses must initiate infection by attaching to a cell surface receptor but
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−→
+Figure 3
+Pleiotropic gene function at the level of polyprotein cleavage. A single viral gene product (P1234) encodes
+three distinct RNA polymerases in alphavirus-infected cells. Proteolytic cleavage of the polyprotein
+modulates the template specificity and function of the RNA-dependent RNA polymerase. Adapted from
+Reference 73, with permission from the authors of Reference 36.
+526
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Translation of
+genome RNA
+nsP2 proteinase cis-
+cleavage at 3/4 site
+P1234
+P123 + nsP4
+P1234
+Negative-strand RNA synthesis
+Positive-strand genome RNA
+5' C
+An 3'
+Un 5'
+C
+5'
+Negative-strand RNA
+An 3'
+Un 5'
+nsP2 proteinase
+cleavage of 1/2 bond
+C
+5'
+An 3'
+Negative-strand RNA
+Un 5'
+Synthesis of 49S
+positive-strand RNA
+nsP1 + p23 + nsP4
+An 5'
+C
+5'
+Positive-strand genome RNA
+Un
+Synthesis of
+negative-strand RNA
+Negative-strand RNA
+5' C
+An 3'
+Un 5'
+nsP2 proteinase
+cleavage of 2/3 bond
+5' C
+An 3'
+Un 5'
+nsP1 + nsP2 +
+nsP3 + nsP4
+Synthesis of 26S positive-strand mRNA 
+and 49S positive-strand RNA
+but not negative-strand RNA
+Un 5'
+C
+5'
++
+Un 5'
+C
+5'
+www.annualreviews.org • On the Biological Success of Viruses
+527
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+are incapable of avoiding a poor host if it has the correct binding site. If the cell or tissue type
+is nonsupportive (nonpermissive) for productive viral replication, the infection would ultimately
+constitute a dead end for the virus. A viral population that contains a high frequency of individuals
+that enter this ecological trap should be fated for extinction (25), in the absence of any genotypic
+change, such as evolution of an altered attachment protein, that remedies the ecological-trap
+problem.
+The remainder of this article addresses the ability of viruses to adapt to overcome problems
+such as ecological traps, as well as the question of whether some viruses may be considered more
+evolvable relative to other viruses or to cellular life in general. However, before addressing these
+topics, it is crucial to first consider whether viruses tend to exist in static versus dynamic environ-
+ments across time and space, because adaptation is only necessary in the face of environmental
+turnover. How often do viruses experience environmental change? When encountering new en-
+vironments that limit their growth or survival, what options do viruses have to cope? Do these
+options differ from those possessed by cellular organisms?
+Biotic and Abiotic Challenges Faced by Viruses
+We contend that viruses are equally or more likely than cellular organisms are to encounter
+environmental change, regardless of the target host genotypes or species (83). This opinion is
+based on the many types of environmental novelties that viruses are expected to encounter, across
+all levels of biological organization considered.
+At the base level of molecules, the most proximate challenge for a virus is to successfully initiate
+cell attachment and entry. These early infection events are driven by functional viral molecules,
+such as proteins that permit cell attachment and enzymes important for transition into the cell.
+But the functional utility of these molecules may be partially or fully compromised depending on
+changes in the host. For example, a coevolutionary arms race between viruses and their hosts will
+exert selection for host modifications that prevent viral infection. Phages are incapable of infecting
+host bacteria that have evolved resistance due to a variety of mechanisms, ranging from cell-surface
+modifications that prevent binding/entry to postinfection barriers such as restriction enzymes and
+CRISPRs that prevent intracellular viral replication (11). Similarly, the human adaptive immune
+system creates changing environments for pathogens such as influenza A viruses, explaining why
+evolutionarily successful flu virus lineages are those with altered antigenic (hemagglutinin protein)
+sites that provide an advantage in the face of immune pressure (35).
+Higher levels of biological organization can also present viruses with changing environmental
+conditions. At the levels of cells and tissues, viruses of multicellular hosts may be challenged
+by intrahost replication that involves cells of varying permissiveness. For example, infected cells
+can release chemicals that signal neighboring cells to upregulate innate immune function, which
+will compromise the subsequent replication and spread of viruses in host tissues. At the level of
+host populations, viruses may encounter variability among hosts in their susceptibility to infection.
+Such variability may result from differences among host genotypes or host physiologies, such as the
+effects of host age on strength of innate immunity (45) and the effects of adaptive immune function.
+These many challenges can adversely affect intrahost viral reproduction and compromise infectious
+viral spread among individuals in the host population. At the level of ecological communities, some
+viruses must undergo obligate or opportunistic replication in very different host species, as is the
+case with arboviruses that thrive by reproducing in both arthropod vectors and vertebrate hosts.
+Viruses passively encounter novel host species as they are moved through coarse-grained biotic
+environments, and it is increasingly recognized that, compared with other types of pathogens, such
+asbacteriaorprotozoa,virusesaremorepronetosuccessfullyemergeonnewhosts(16,75).Habitat
+528
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+fragmentation and other anthropogenic changes to the environment may increase the probability
+that viruses encounter new host species, including humans, thus augmenting emergence risk
+(54). These many examples of environmental change constitute only a subset of the myriad biotic
+challenges viruses face across different levels of biological organization, with adverse consequences
+for viral infection and epidemic spread.
+Historically, the novel abiotic challenges viruses face have received less attention than the
+aforementioned biotic challenges. Nevertheless, many types of abiotic perturbations can cause
+viral mortality, i.e., the inability of a viral particle to successfully complete within-host replication
+after experiencing an environmental challenge (56). A wide variety of environmental stressors
+are known to somehow compromise a virus’s subsequent ability to productively infect a host;
+examples include changes in ambient temperature, ionic strength (saltiness), UV radiation, acidity,
+atmospheric pressure, and moisture (2, 49, 56, 58). Although capsids function to protect viral
+nucleic acid from degradation by these and other environmental stressors, the protection is not
+absolute, and some viruses may experience very short half-lives outside of the host under these
+harsh conditions. Some viruses seem extremely tolerant of environmental exposure; for example,
+some rotaviruses can remain stable on exposed surfaces for long periods, promoting successful
+outbreaks in humans living in a closed habitat such as an ocean-bound cruise ship (32). However,
+mechanisms to explain long versus short viral half-lives remain to be discovered. For example, it
+is often unknown whether differences in viral mortality in the face of environmental change are
+better explained by resistance to degradation of nucleic acid (23) or by resistance to destruction
+of capsid proteins and viral enzymes used in cell entry (26).
+Ecosystem-level changes have the potential to threaten the survival of all biological popu-
+lations, but their possible impacts on the tiniest entities are seldom studied and remain poorly
+understood. Threats of global warming, rising sea levels, and ocean acidification receive plenty of
+attention from the popular press and are well known to the lay public. These radical widespread
+changes would be experienced by viruses, just as they would by other biological populations.
+However, only a few studies have examined the effects on viral mortality of abiotic challenges
+associated with proposed ecosystem changes, such as increased acidity of marine water (48) or
+stochastic temperature fluctuations predicted by some climate change models (2). More research
+is needed to identify how the survival of viruses may be compromised under radical ecosystem
+changes. Virus-induced mortality could regulate the size of a host population, as is proposed for
+cyanophage regulation of cyanobacteria populations in the ocean; arguably, this regulation would
+mean that the viruses indirectly dictate how much the bacteria contribute to global photosynthetic
+productivity (74). Thus, if increased ocean acidification were more detrimental to cyanophages
+than to their host cyanobacteria, this greater vulnerability could create a regulation imbalance
+leading to altered mean photosynthetic productivity in the ecosystem. At the least, this scenario
+could cause more-variable photosynthetic productivity, because blooms and crashes could occur
+when cyanobacteria populations are released from cyanophage regulation. This idea is speculative,
+but it is certainly worth researching whether ecosystem function can be upset by the effects of
+widespread environmental change on the most microscopic of populations. Our main message
+is that viruses are also vulnerable to adverse effects of ecosystem change, and the effects of such
+change on virus-host ecological interactions constitute vital areas for future study.
+Can Viruses Adapt to Cope with Environmental Change?
+Apparently, the answer to this question is a resounding “yes,” at least for an environmental chal-
+lenge of extreme importance in biomedicine, agriculture, and conservation biology. Of the afore-
+mentioned biotic challenges faced by viruses, infection of new host genotypes or species has
+www.annualreviews.org • On the Biological Success of Viruses
+529
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Sex: any genetic
+exchange between
+individuals that results
+in new combinations
+of alleles
+Specialist: a variant
+with a relatively
+narrow niche, allowing
+reproduction and/or
+survival under few
+ecological conditions
+Generalist: a variant
+with a relatively broad
+niche, allowing
+reproduction and/or
+survival under many
+ecological conditions
+received the greatest attention, due to concerns over the effects of emerging viruses on human dis-
+ease morbidity/mortality, on economic losses incurred in agricultural systems, and on continued
+preservation of rare species threatened with extinction. Obviously, viruses must occasionally be
+successful in coping with this type of environmental change; otherwise, emergence (especially of
+viral pathogens that zoonotically transmit from wild and domesticated animals to humans) would
+not be recognized as a widespread problem (42). However, it bears reminding that hosts such as
+humans are exposed to a wide diversity of potential pathogens through the air we breathe, the food
+and water we ingest, etc.; only a tiny subset of these viruses can climb the “pathogen pyramid”
+(93) to become worrisome pathogens that successfully infect, transmit, and spread epidemically in
+humans. A virus does not necessarily have to change genetically to emerge on a novel host; rather,
+it may fortuitously infect a previously unencountered host (31, 85). Still, evidence suggests that
+one or more point mutations are needed for a virus to overcome a new environmental challenge,
+such as emergence on a new host or better survival in the face of an abiotic stressor. Therefore,
+drawing heavily upon our own empirical observations in RNA viruses, we confine our discussion
+below to examples in which viruses adapt via beneficial genetic modification, allowing them to
+overcome biotic and abiotic challenges. In particular, we focus on the role of genetic variation
+created through spontaneous mutation and sex (recombination/reassortment) in contributing to
+RNA virus adaptation under environmental change. We use these examples to illustrate that vi-
+ral adaptability is impressive but also to emphasize that adaptation to one set of conditions may
+concomitantly affect viral performance under other circumstances (i.e., evolved trade-offs across
+environments).
+Spontaneous mutations are the primary currency for evolution by natural selection. These
+mutations create genetic variability among individuals, which can lead to phenotypic differences
+that dictate which individuals are selectively favored to dominate the population in its current
+environment. From the perspective of inevitable environmental turnover, it is intriguing to study
+whether the advantageous effects of beneficial mutations are confined to the environment where
+they are positively selected or whether they are broadly beneficial across environments, includ-
+ing those previously unencountered. These circumstantial effects relate to the broad ecological
+concepts of environmental specialization versus generalization (47, 82). By definition, specialists
+are capable of thriving under relatively confined ecological conditions (narrow niche), whereas
+generalists can occupy a broader niche space.
+We studied the specialized versus generalized role of mutations in host emergence using phage
+ϕ6, an RNA virus that infects pseudomonads, especially certain pathovars (plant-pathogenic vari-
+eties) of Pseudomonas syringae bacteria (31). Phage ϕ6 is usually grown on P. syringae pv. phaseolicola
+in the laboratory, but point mutations in the P3 attachment protein determine whether the virus
+can shift onto other species of host bacteria; the spectrum of mutations in P3 allowing such host
+shifts contains at least 10 different nonsynonymous substitutions (31, 83). Interestingly, most of
+these mutations allow host-niche expansion of the virus, through which it is capable of infecting
+a novel host but maintains the ability to infect the original P. syringae pv. phaseolicola host (29,
+31). This property allowed us to test whether or not these emergence mutations are on average
+cost free. It is widely presumed that the intimacy of virus-host interactions should cause a virus to
+evolve strong performance on its current host, and that mutations allowing emergence on a new
+host should reduce performance on the old host. But this presumption assumes that emergence
+mutations tend to be antagonistically pleiotropic: Mutations governing infection in the novel host
+are assumed to compromise performance in the original host. Because P3 mutations in phage
+ϕ6 allow range expansion (incorporation of new species in the host repertoire), we could gauge
+whether ability to emerge on a new host tended to reduce ability to grow on the original host.
+Consistent with the untested assumption, most (7 of 10) mutations allowing emergence led to
+530
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Fitness: the ability of
+an individual variant to
+survive and/or
+reproduce, relative to
+other variants in the
+population
+Cheater:
+an individual in the
+population that
+interacts with others to
+gain a relative fitness
+advantage at the
+others’ expense
+significantly poorer growth on the original host species; however, these data also indicated that
+antagonistic pleiotropy was not universal, because 3 of the emergence mutations were cost free
+on the original host (31). Clearly, there are emergence mutations that strongly reduce (31, 83) or
+even eliminate (29) growth on the original host. Nonetheless, these results are intriguing because
+they challenge the paradigm that viruses must forego strong performance across host types as they
+emerge; rather, they may experience mutations that expand host range at no cost. This finding
+should motivate studies of fitness consequences of emergence alleles in viruses of eukaryotes, such
+as those that infect humans and other mammals.
+Genetic variation in a population can also be generated through sex: the process of exchanging
+genetic material between individuals, which creates new combinations of alleles. In viruses, sex
+can occur through classic recombination (breaking and joining of homologous nucleic acid) or
+through reassortment (swapping of chromosome segments between segmented RNA viruses to
+create new combinations) (77). Similar to influenza A virus and other segmented viruses, phage
+ϕ6 contains multiple segments per particle (86). This property allows phage ϕ6 genotypes that
+coinfect the same host cell to undergo reassortment, a process that produces hybrid genotypes
+containing mixtures of the three segments that were present in each coinfecting parent virus
+(38, 79). Phage ϕ6 is in the viral family Cystoviridae, and phylogeography studies involving natural
+populations of these viruses show that genetic variation generated through reassortment rivals or
+exceeds that generated through mutation alone (59, 71). Thus, reassortment is a key component
+of Cystoviridae biology, and the genetic variation generated through this process may play an
+important role in the adaptation of these viruses.
+We used lab experiments to examine whether reassortment creates useful genetic variation in
+populations of phage ϕ6, allowing these populations to adapt faster than viral populations evolving
+through mutation alone (80). Classic ideas on the evolutionary advantage of sex assert that sex is
+common in natural populations because the additional genetic variation allows sexual populations
+to adapt faster than their asexual counterparts (34, 55, 84). We controlled the presence and absence
+of sex (reassortment) in phage ϕ6 populations by manipulating whether treatment populations
+experienced high versus low multiplicity of infection (MOI; ratio of viruses to cells); high MOI
+increasestheprobabilitythatmultiplevirusescoinfectthesamehostcellandundergoreassortment,
+whereas low MOI allows mostly clonal (single-virus) infection of each host cell (79). When viruses
+were challenged to further adapt to their typical P. syringae pv. phaseolicola hosts, high-MOI
+lineages unexpectedly evolved more slowly than low-MOI lineages did (80), contrary to the classic
+prediction. This outcome was explained by viral specialization to MOI conditions, whereby high-
+MOI evolved lineages adapted to perform better under coinfection, which traded off with their
+general ability to grow well under clonal conditions (78–81). In particular, the evolved high-MOI
+viruses became cheaters that benefited from using intracellular products created by other viruses
+during coinfection, but this selfish strategy entailed less efficient production of resources when
+the cheaters infected cells on their own (79). These results are compelling because they indicate
+that the consequences of evolved specialization to one portion of the niche (i.e., coinfection) may
+override the possible generalized benefits of variation generated through viral sex. It is important
+to note that although sexual processes such as reassortment may occasionally produce beneficial
+variation for an evolving population, segmentation might have originally evolved for a purpose
+other than promoting adaptation. In particular, segmentation might have evolved to promote
+efficient packaging of the RNA virus genome (52), perhaps making it unlikely to observe an
+advantage of sex consistent with classic evolution-of-sex hypotheses (84).
+One goal of the study of evolutionary biology is to make it a more predictive science. A prime
+example is the virus emergence problem, for which our efforts to date are largely reactive rather
+than proactive. If we could better predict which viral genotypes or species will successfully emerge
+www.annualreviews.org • On the Biological Success of Viruses
+531
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+in a host population such as humans, we could proactively prepare for inevitable pandemics similar
+to the current AIDS crisis caused by HIV emergence. We are a long way from accurately predicting
+emergence events in viral evolution (57), but recent experiments have made inroads.
+To test emergence predictions, we used experiments with VSV, which is naturally transmitted
+between mammalian hosts via arthropod vectors. VSV is easily grown on a wide variety of cell types
+in laboratory tissue culture. We first used VSV to select for viral lineages that were specialized in
+usingasinglehost type(versus generalizedin usingmultiplehost types) (66,82).Wethen harnessed
+this collection of viral lineages to test a popular idea in predictions of disease emergence. This idea
+asserts that pathogens that are already capable of infecting multiple hosts should pose a greater
+threat to emerge on new hosts such as humans (16, 75), consistent with the classic notion that
+resource generalization is advantageous under resource uncertainty (72). We thus predicted that
+the lineages selected for host-use generalization would be advantaged when challenged to grow
+on a battery of new hosts, compared with their more specialized counterparts. Results confirmed
+that direct selection for host breadth fostered successful emergence on novel hosts, as assessed by
+measures of average growth (titer) on new hosts and estimates of variance in growth across host
+types (85). These results speak to predictions in evolutionary biology, suggesting that thorough
+knowledge of existing pathogen niche breadth (admittedly difficult information to obtain) would
+help identify which pathogen types are best poised to undergo host shifts.
+Are Viruses More Evolvable than Cellular Life?
+Despite their interesting caveats, evolution experiments with viruses clearly show the capacity
+of viruses to adapt successfully to environmental change. But are viruses more adaptable than
+cellular organisms? From the standpoint of the variation that drives natural selection, some viruses
+have greater access to potentially beneficial mutations simply because they mutate more often.
+Comparative estimates of mutation rates show that RNA and single-stranded DNA viruses mutate
+more readily than other evolving systems, owing to their error-prone replication and lack of
+proofreading to correct spontaneous mistakes in copying genetic material (28, 30). This indicates
+an inherent advantage for RNA and single-stranded DNA viruses when selection sorts through
+individual variants to find a possibly better match to current environmental challenges. Of course,
+this variation is not guaranteed to produce the needed adaptation, for several reasons. First, a
+particular variation may be useless in the face of particular challenges, indicating a constraint for
+natural selection to proceed. Second, natural selection can only proceed efficiently at sufficiently
+large population sizes (12); otherwise, genetic drift will be a more important force in evolution,
+and high mutation rate can create a mutational load that causes a viral population to decline
+in fitness rather than improve (15). Third, viruses tend to have smaller genome sizes and less
+genetic redundancy than cellular organisms, and therefore they possess less material that could be
+genetically modified through selection. Finally, a high mutation rate could be a liability if an error
+threshold exists, whereby the population thrives at the brink of error catastrophe (19), experiencing
+too many mutations per unit time (with the expectation that most mutations are deleterious as
+opposed to beneficial or neutral). Perhaps this brink of existence is most important if a population
+has reached equilibrium in a constant environment, making any nonneutral mutation a liability,
+but we argued above that viruses probably rarely if ever experience truly static environments.
+Still, many nonviral evolving populations face some of these same obstacles to selection, and
+available evidence strongly suggests that the higher mutation rate of some viruses creates an
+adaptive advantage. Anecdotally, this may explain why RNA viruses seem to emerge in new host
+species more often than other microbes do, despite being rarer in the biosphere. However, we
+must be careful in drawing this conclusion, because our view is skewed toward disease emergence
+532
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+Genetic robustness:
+phenotypic constancy
+despite underlying
+genetic change
+in humans. For unknown reasons, we humans may be more susceptible to emergence by RNA
+viruses, whereas other hosts may not; only time-consuming and expensive surveillance of a wide
+variety of hosts could evaluate this possibility.
+Evolvability is an intriguing process that extends beyond mere adaptation, because it involves
+the evolution of evolution itself; in theory, organisms might be molded by natural selection to be
+advantaged in their capacity to selectively adapt to future environmental changes. Although this
+process seems plausible, it is difficult to conceive how organisms can be naturally selected to better
+perform in environments they have never before encountered, especially because the prevailing
+notion is that evolution is blind—that is, it does not proceed toward some future goal (20, 72).
+There is abundant mathematical theory on evolvability (88), but only recently have experiments
+rigorously addressed this process, and the majority of studies used experimental evolution of
+microbes (13, 49). Indeed, some of these experiments demonstrate that lineages can differ in their
+evolvability, gaining a relative advantage over other populations when challenged to adapt to
+environmental change. However, proof of the underlying mechanism(s) that drive evolvability
+remains mostly elusive. Here we focus on the prediction that evolved robustness is a mechanism
+that can drive evolvability.
+Genetic robustness is defined as phenotypic constancy despite underlying genetic change (24).
+If a mutation changes a phenotype, we consider the gene or, more broadly, the genome, to be
+relatively nonrobust, or brittle, against mutational input. However, if a genome changes but
+phenotype remains unaffected, the genome is considered genetically robust.
+If robustness affects evolvability, it should impact the ability of organisms to access evolutionary
+innovations. Robustness allows for easier accumulation of mutations that are neutral in the current
+environment; if the habitat changes, this robust genetic architecture may then promote access to
+a greater number of mutations that are beneficial for adaptation (87). For example, a robust
+population may be envisioned as residing in a region of a fitness landscape that is relatively flat,
+owing to the high proportion of resident genotypes in the population that are equal (neutral)
+in fitness (92). This creates a large neutral network of genotypes that can efficiently traverse the
+landscape through random drift, due to their high degree of network connectivity. If environmental
+change alters the fitness landscape, a robust population may experience an evolvability advantage
+because newly arising mutations occur in a wider diversity of genetic backgrounds, creating more-
+varied epistatic combinations that may prove beneficial for adaptation (40).
+We studied the influence of robustness on evolvability using an empirical system in which rel-
+atively robust and brittle genotypes had been identified (53) and viruses were strongly selected to
+adapt to harsh environmental conditions (49). First, we identified a fundamental difference between
+populations of phage ϕ6 that had evolved at high versus low MOI (80). At high MOI, the viruses
+experienced complementation, a general mechanism by which viral genotypes of lower fitness
+can phenotypically profit from intracellular proteins made by coinfecting viruses of higher fit-
+ness (38). This complementation during coinfection should automatically buffer viral phenotypes
+against mutations. Thus, complementation offered a built-in mutational buffering mechanism in
+coinfecting viral lineages, which may have weakened selection for the viruses to maintain their
+individual-level robustness. This de-evolution of robustness should cause the high-MOI lineages
+to be more susceptible to phenotypic effects of mutational change than their low-MOI evolved
+counterparts are. That is, the high-MOI viruses should be brittle to mutational input, whereas
+the low-MOI populations should be robust. We proved that the lineages had evolved differing
+robustness by isolating clones at random from each treatment group and using them to found new
+lineages evolved under mutation accumulation. This process consisted of passage through ex-
+treme daily bottlenecks (plaque-to-plaque transfers) in which drift overwhelms selection because
+the small population size causes spontaneous mutations (most of them deleterious) to fix at random
+www.annualreviews.org • On the Biological Success of Viruses
+533
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+60
+b
+a
+50
+40
+30
+Thermal incubation
+(5 min at 45°C)
+20
+10
+Mean change in percent
+survival after evolution
+0
+Lysate
+High-density
+growth/harvest
+Robust lineages
+Brittle lineages
+50 generations
+Figure 4
+(a) Design for an evolution experiment in which phage lineages were selected to withstand damaging effects of heat shock. A phage ϕ6
+lysate was exposed to 45◦C incubation for 5 min, and a dilution of the surviving progeny was plated on a lawn of Pseudomonas syringae
+pv. phaseolicola bacteria. Overnight plaque formation at 25◦C corresponded to 5 generations of phage evolution. The plaques were
+then harvested, and the process was repeated for 10 days (equivalent to 50 phage generations). (b) Robust viruses are advantaged in
+evolvability of thermotolerance. Mean change in percent survival after selection with heat shock (45◦C) is greater for viral lineages
+founded by 12 robust strains (blue circles) than for lineages initiated by 12 brittle strains (red circles). All populations were subjected to
+10 days (50 generations) of periodic heat shocks. The solid line is the grand mean for the group, and dashed lines are 95% confidence
+intervals. Both panels adapted with permission from Reference 50.
+(15). The fitness effects of randomly accumulated mutations were greater and more variable in
+lineages founded by previously high-MOI evolved viruses, indicating that these lineages were less
+able to withstand the deleterious effects of mutations and confirming the prediction that they had
+evolved lowered robustness (53).
+To determine whether robustness promoted evolvability, we studied adaptation of robust and
+brittle phage ϕ6 strains in an environment where viruses would be strongly selected to overcome
+harsh environmental conditions. The virus is normally cultured at 25◦C, but when exposed to heat
+shock, such as 45◦C for 5 min, roughly 80% of viral particles lose the capacity to productively infect
+bacteria (57, 58), owing to the poor stability of the phage lytic enzyme at high temperature (26). We
+allowed lineages founded by robust and brittle viruses to evolve on P. syringae pv. phaseolicola at
+25◦C, with periodic (every fifth generation) exposure to 45◦C heat shock (49). Then we measured
+mean percent survival at 45◦C for each founding clone and its derived endpoint population, to
+estimate the change in percent survival after 50 generations of selection to resist damaging heat
+shock. Results showed that the lineages founded by robust genotypes were more evolvable: They
+experienced greater adaptation (increase in percent survival) by the end of the study (Figure 4).
+Apparently, some difference in genetic architecture between the robust and brittle viral strains
+allows the robust viruses to more easily innovate in the face of heat shock. The exact mechanism for
+the robustness-evolvability link in phage ϕ6 has not been fully elucidated but most likely concerns
+the P5 lytic enzyme, because mutations in this protein are beneficial for thermotolerance (26) and
+presumably also function to buffer mutational effects elsewhere in the genome.
+More work is needed to study generalized links between robustness and evolvability in viruses
+and in other biological systems, as few of these kinds of studies have been attempted to date (9, 17,
+70). Equally compelling is exploration of evolvability differences among groups of organisms, such
+534
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+as testing whether viruses as a group are more evolvable than cellular life. Although intriguing, it
+is unclear how these experiments could be adequately designed and tested. The properties of even
+closely related organisms are different enough that it is difficult to compare their evolvability in the
+face of the same challenge; ideally, they would have identical mutation rates, genetic architectures,
+physiologies, etc. Clearly, this would not be the case when comparing viruses with any other type
+of organism. Rather, we could seek indirect evidence for evolvability differences among major
+or minor groups of organisms. One possibility would be to determine whether species in the
+respective groups tend to survive for different periods of geologic time, as tested when comparing
+average rates of extinction between groups.
+Can Viruses Better Avoid Extinction?
+Extinction seems to be the ultimate fate of most species that have appeared on Earth; on the basis
+of the fossil record, it is estimated that well over 99.99% of all macroscopic species have gone
+extinct and that the average duration of their existence is roughly 10 million years (65). These are
+distinctly sobering statistics for humans to contemplate as a species! How long have viruses been
+present on Earth? The evolutionary origin of viruses is a hotly debated subject, but some ideas
+posit that viruses predate cellular life (61). For example, the widespread observation that viruses
+sometimes contain genes nonhomologous to known cellular life suggests that these are remnants
+of an ancient viral world, arguing against the notion that viruses originate by reductively splitting
+off from cellular genomes (43). Confirmation of this “virus first” claim would firmly conclude that
+viruses better avoid extinction than cellular organisms; perhaps they were here first and remain to
+this day.
+But we cannot easily rely on the fossil record to test extinction hypotheses comparing viruses
+with nonviral life, because viruses and other microscopic, soft-bodied organisms are less prone to
+fossilization and therefore cannot be found in the fossil record. However, we might usefully begin
+by examiningproperties of viruses aloneand asking whether viruses possess certain traits that would
+aid their extinction avoidance. Above, we described how viruses might be especially vulnerable to
+ecological traps (25). One possibility is that viral binding affinities could be traits resulting from
+selection to avoid improper environments; even if binding properties did not originally evolve
+for this purpose, they may indirectly function in this way. For example, viral coreceptors might
+function in this capacity. Selection for viral attachment to a primary cellular receptor would foster
+interaction with presumably suitable (permissive) host cells, whereas selection for a secondary
+coreceptor would increase the probability that the exact correct match is made. The evolution
+of phages that have short and long tail fibers with separate binding affinities may exemplify this
+phenomenon. In certain T-even phages, long tail fibers probe the cell surface to function in
+initial, reversible binding, whereas short tail fibers attach to additional coreceptors that function
+in irreversible binding (67). It would be intriguing to examine primary versus secondary binding
+affinities of viruses from a wide variety of viral families, to test the general hypothesis that viruses
+show less-specific primary binding and more-specific secondary binding.
+Finally, it is compelling to consider whether viruses better avoid extinction by losing their
+individuality altogether. The Human Genome Project and other sequencing efforts reveal that
+virus-derived genes are exceedingly common in the genomes of single-celled and multicellular life.
+This genome incorporation is largely considered to be accidental, as is the case with transduction,
+in which phage genes are recombined into bacterial genomes, seemingly as mistakes, during the
+infection process. This loss of individuality seems like a clearly bad outcome from the standpoint of
+individual autonomy. But the perspective may differ if we consider selection acting at levels below
+the individual; from a selfish gene standpoint (21), perhaps we can view the widespread occurrence
+www.annualreviews.org • On the Biological Success of Viruses
+535
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+of virus-gene incorporation as being positively driven by selection, at least some of the time, rather
+than purely accidental in all cases. Arguably, viruses are not very autonomous anyway. As stated
+above, viruses seem to be the evolutionary champions of harnessing other organisms to do their
+work, relying entirely on their hosts’ ATP generation. If a viral gene is the target of selection,
+rather than the virus itself, it could conceivably be pushed by selection to become a gene or a suite
+of genes contained within host genomes. Of course, this is a tenuous outcome, because selection
+acting on the host may result in these genes being co-opted entirely for host functions, causing the
+virus-derived gene to lose all virus-like properties. But this selfish gene–like process may explain
+the widespread success of polydnaviruses, which are arguably actually virus-like particles (rather
+than true viruses) that deliver expressed parasitoid-wasp genes into insect larvae to allow the wasp
+progeny to complete their life cycles by warding off antiparasitoid immunity (90). We are only
+beginning to appreciate the widespread occurrence of virus-derived genes in host genomes, and
+it is intriguing to surmise that these events may occur due to positive selection on viral genes to
+lose their viral autonomy.
+CONCLUSION
+The evidence we put forth in this article emphasizes that viruses are biologically successful, and
+arguably more successful than cellular life, according to the many and varied metrics we examine.
+The expected consequence of this apparent success is that viruses should have far-ranging effects
+on other organisms in the biosphere. Organisms do not live in an ecological vacuum, meaning that
+abundant and biodiverse entities should tend to widely ecologically interact with other inhabitants
+of the biosphere, having pervasive effects on the biological world. Indeed, viruses are ecologically
+interactive by necessity because they must rely on metabolizing hosts to complete their life cycles.
+Moreover, the impact of viruses on other organisms is obvious, at levels ranging from the genome
+to the ecosystem. Genome sequencing efforts show that virus-derived genes are commonly found
+in the genomes of other viruses and of cellular organisms. As sequencing efforts continue to expand
+the catalog of fully sequenced host-species genomes and to characterize newly identified viral
+genes/genomes in sequence databases, our understanding of this genome-level impact will only
+increase. The importance of virus-derived genes in macroevolution can be profound, evidenced by
+the evolution of placental mammals (of which humans are a member), which contain an assimilated
+retroviral gene, syncytin, that is essential for placental morphogenesis (51). As a consequence
+of often antagonistic virus-host interactions, molecular mechanisms have evolved that function
+in repelling viral attacks, including CRISPR/Cas systems, small-interfering RNAs, and cellular
+apoptosis, as well as cytokines, interferons, and Toll-like receptors, which function in antiviral
+immunity. Although evolved virus-host mutualism is possible (68), the infamous role of viruses
+in disease and pandemics shows their widespread adverse effects on hosts across the biosphere;
+human examples include the current HIV/AIDS crisis, the 1918 flu pandemic, and the decimation
+of Native American populations by smallpox introduced by European colonists.
+We can confidently state that viruses have long interacted with cellular life, and they might
+have even originated before evolution of the cell. This dynamic between viruses and host species is
+certain to continue as natural selection pushes viruses to evolve varied and novel means to exploit
+cellular life across the biosphere. Viruses incidentally meet other organisms in their environments,
+and anthropogenic changes to habitats will increase these chance encounters, sometimes creating
+opportunistic emergence of viruses into humans and other hosts. Even if most of these events
+do not result in viral spread, their frequency and the latent adaptive potential of viruses ensure
+that the evolution of new virus-host interactions is inevitable (see Reference 44 for a discussion
+of the multiple independent evolutionary origins of HIV from simian immunodeficiency virus in
+536
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+humans). But what would be the fate of viruses in a postcellular world? Mass extinctions of cellular
+life due to ecosystem-wide environmental catastrophes are not without precedent (65). Would
+the inherent evolvability of viruses rescue them in the absence of cellular organisms, marking
+a successful return to the purported virus-first world that may have predated cells? We leave
+you with this last question to ponder, indicating an obvious weak link in the chain of otherwise
+overwhelming biological success of viruses.
+SUMMARY POINTS
+1. Viruses are arguably the most successful of all evolving entities on the planet.
+2. Viral success is evident from greater numerical abundance and biodiversity that rivals
+that of cellular life.
+3. Viruses grow more efficiently than cellular life does, because they exclusively harness
+host energy for viral replication rather than generating the energy themselves.
+4. Viruses show a strong capacity to adapt despite often facing biotic and abiotic changes
+in their environments, at all levels of biological organization.
+5. Natural selection allows viruses to readily adapt to new conditions, but this adaptation
+may trade off with performance in prior or alternative environments.
+6. Elevated mutation rates and genetic robustness may provide evolvability advantages in
+viruses that are not experienced by cellular life.
+7. The biological success of viruses is consequential for cellular life, profoundly impacting
+host genomes and populations as well as entire ecosystems.
+8. Viruses may be more ancient than cellular life, and they seem poised for further success
+as evolution proceeds into the future on our planet.
+FUTURE ISSUES
+1. Increased natural sampling of viruses is necessary to better understand the complete
+virosphere (viral diversity on Earth) and to truly gauge the extent of viral success.
+2. A greater understanding is needed of the mechanisms of viral adaptation, particularly in
+response to large-scale ecosystem changes such as global warming.
+3. Functional mechanistic drivers of evolvability can be rigorously studied in viruses but
+remain poorly understood to date.
+4. Resolving the evolutionary origins of viruses and relatedness among viral families would
+aid understanding of the role they play in the larger evolutionary history of the biosphere.
+DISCLOSURE STATEMENT
+The authors are not aware of any affiliations, memberships, funding, or financial holdings that
+might be perceived as affecting the objectivity of this review.
+ACKNOWLEDGMENTS
+This work was supported by US National Science Foundation grant DEB-10-21243 to P.E.T.
+www.annualreviews.org • On the Biological Success of Viruses
+537
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+LITERATURE CITED
+1. Ahmed M, Lyles DS. 1998. Effect of vesicular stomatitis virus matrix protein on transcription directed by
+host RNA polymerases I, II, and III. J. Virol. 72:8413–19
+2. Alto BW, Wasik BR, Morales NM, Turner PE. 2013. Stochastic temperatures impede RNA virus adap-
+tation. Evolution 67:969–79
+3. Baccam P, Beauchemin C, Macken CA, Hayden FG, Perelson AS. 2006. Kinetics of influenza A virus
+infection in humans. J. Virol. 80:7590–99
+4. Baltimore D. 1971. Expression of animal virus genomes. Bacteriol. Rev. 35:235–41
+5. Balvay L, Soto Rifo R, Ricci EP, Decimo D, Ohlmann T. 2009. Structural and functional diversity of viral
+IRESes. Biochim. Biophys. Acta 1789:542–57
+6. Bamford DH. 2003. Do viruses form lineages across different domains of life? Res. Microbiol. 154:231–36
+7. Bergh O, Borsheim KY, Bratbak G, Heldal M. 1989. High abundance of viruses found in aquatic envi-
+ronments. Nature 340:467–68
+8. Black BL, Rhodes RB, McKenzie M, Lyles DS. 1993. The role of vesicular stomatitis virus matrix protein
+in inhibition of host-directed gene expression is genetically separable from its function in virus assembly.
+J. Virol. 67:4814–21
+9. Bloom JD, Labthavikul ST, Otey CR, Arnold FH. 2006. Protein stability promotes evolvability.
+Proc. Natl. Acad. Sci. USA 103:5869–74
+10. Bolduc B, Shaughnessy DP, Wolf YI, Koonin EV, Roberto FF, Young M. 2012. Identification of novel
+positive-strand RNA viruses by metagenomic analysis of archaea-dominated Yellowstone hot springs.
+J. Virol. 86:5562–73
+11. Brouns SJ, Jore MM, Lundgren M, Westra ER, Slijkhuis RJ, et al. 2008. Small CRISPR RNAs guide
+antiviral defense in prokaryotes. Science 321:960–64
+12. Burch CL, Chao L. 1999. Evolution by small steps and rugged landscapes in the RNA virus ϕ6. Genetics
+151:921–27
+13. Burch CL, Chao L. 2000. Evolvability of an RNA virus is determined by its mutational neighbourhood.
+Nature 406:625–28
+14. Cantalupo PG, Calgua B, Zhao G, Hundesa A, Wier AD, et al. 2011. Raw sewage harbors diverse viral
+populations. mBio 2:e00180–11
+15. Chao L. 1990. Fitness of RNA virus decreased by Muller’s ratchet. Nature 348:454–55
+16. Cleaveland S, Laurenson MK, Taylor LH. 2001. Diseases of humans and their domestic mammals:
+pathogen characteristics, host range and the risk of emergence. Philos. Trans. R. Soc. Lond. B Biol. Sci.
+356:991–99
+17. Codoner FM, Daros JA, Sole RV, Elena SF. 2006. The fittest versus the flattest: experimental confirmation
+of the quasispecies effect with subviral pathogens. PLoS Pathog. 2:e136
+18. Cracraft J, Donoghue MJ, eds. 2004. Assembling the Tree of Life. New York: Oxford Univ. Press. 576 pp.
+19. Crotty S, Cameron CE, Andino R. 2001. RNA virus error catastrophe: direct molecular test by using
+ribavirin. Proc. Natl. Acad. Sci. USA 98:6895–900
+20. Darwin C. 1859. On the Origin of Species by Means of Natural Selection. London: John Murray. 502 pp.
+21. Dawkins R. 1976. The Selfish Gene. Oxford, UK: Oxford Univ. Press. 224 pp.
+22. de Groot RJ, Hardy WR, Shirako Y, Strauss JH. 1990. Cleavage-site preferences of Sindbis virus polypro-
+teins containing the non-structural proteinase. Evidence for temporal regulation of polyprotein processing
+in vivo. EMBO J. 9:2631–38
+23. De Paepe M, Taddei F. 2006. Viruses’ life history: towards a mechanistic basis of a trade-off between
+survival and reproduction among phages. PLoS Biol. 4:e193
+24. de Visser JAGM, Hermisson J, Wagner GP, Meyers LA, Bagheri HC, et al. 2003. Perspective: evolution
+and detection of genetic robustness. Evolution 57:1959–72
+25. Dennehy JJ, Friedenberg NA, Yang YW, Turner PE. 2007. Virus population extinction via ecological
+traps. Ecol. Lett. 10:230–40
+26. Dessau M, Goldhill D, McBride RL, Turner PE, Modis Y. 2012. Selective pressure causes an RNA virus
+to trade reproductive fitness for increased structural and thermal stability of a viral enzyme. PLoS Genet.
+8:e1003102
+538
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+27. Diemer GS, Stedman KM. 2012. A novel virus genome discovered in an extreme environment suggests
+recombination between unrelated groups of RNA and DNA viruses. Biol. Direct 7:13
+28. Drake JW, Charlesworth B, Charlesworth D, Crow JF. 1998. Rates of spontaneous mutation. Genetics
+148:1667–86
+29. Duffy S, Burch CL, Turner PE. 2007. Evolution of host specificity drives reproductive isolation among
+RNA viruses. Evolution 61:2614–22
+30. Duffy S, Shackelton LA, Holmes EC. 2008. Rates of evolutionary change in viruses: patterns and deter-
+minants. Nat. Rev. Genet. 9:267–76
+31. Duffy S, Turner PE, Burch CL. 2006. Pleiotropic costs of niche expansion in the RNA bacteriophage
+ϕ6. Genetics 172:751–57
+32. Estes MK, Graham DY, Smith EM, Gerba CP. 1979. Rotavirus stability and inactivation. J. Gen. Virol.
+43:403–9
+33. Fauquet CM, Mayo MA, Maniloff J, Desselberger U, Ball LA, eds. 2005. Virus Taxonomy: Eighth Report
+of the International Committee on Taxonomy of Viruses. San Diego, CA: Elsevier
+34. Fisher RA. 1930. The Genetical Theory of Natural Selection. Oxford, UK: Clarendon. 272 pp.
+35. Fitch WM, Leiter JM, Li XQ, Palese P. 1991. Positive Darwinian evolution in human influenza A viruses.
+Proc. Natl. Acad. Sci. USA 88:4270–74
+36. Flint SJ, Enquist LW, Racaniello VR, Skalka AM. 2009. Principles of Virology, Vols. 1, 2. Washington,
+DC: ASM Press. 569 pp. 419 pp. 3rd ed.
+37. Freeman S, Herron JC. 2003. Evolutionary Analysis. Upper Saddle River, NJ: Pearson Prentice Hall. 3rd
+ed.
+38. Froissart R, Wilke CO, Montville R, Remold SK, Chao L, Turner PE. 2004. Co-infection weakens
+selection against epistatic mutations in RNA viruses. Genetics 168:9–19
+39. Hendrix RW. 2002. Bacteriophages: evolution of the majority. Theor. Popul. Biol. 61:471–80
+40. Huynen MA, Stadler PF, Fontana W. 1996. Smoothness within ruggedness: the role of neutrality in
+adaptation. Proc. Natl. Acad. Sci. USA 93:397–401
+41. Johnson ZI, Chisholm SW. 2004. Properties of overlapping genes are conserved across microbial genomes.
+Genome Res. 14:2268–72
+42. Jones KE, Patel NG, Levy MA, Storeygard A, Balk D, et al. 2008. Global trends in emerging infectious
+diseases. Nature 451:990–93
+43. Koonin EV, Senkevich TG, Dolja VV. 2006. The ancient virus world and evolution of cells. Biol. Direct
+1:29
+44. Korber B, Muldoon M, Theiler J, Gao F, Gupta R, et al. 2000. Timing the ancestor of the HIV-1 pandemic
+strains. Science 288:1789–96
+45. Kovacs EJ, Palmer JL, Fortin CF, Fulop T Jr, Goldstein DR, Linton PJ. 2009. Aging and innate immunity
+in the mouse: impact of intrinsic and extrinsic factors. Trends Immunol. 30:319–24
+46. Lemm JA, Rice CM. 1993. Roles of nonstructural polyproteins and cleavage products in regulating Sindbis
+virus RNA replication and transcription. J. Virol. 67:1916–26
+47. Levins R. 1968. Evolution in Changing Environments: Some Theoretical Explorations. Princeton, NJ: Princeton
+Univ. Press. 132 pp.
+48. Marston MF, Pierciey FJ Jr, Shepard A, Gearin G, Qi J, et al. 2012. Rapid diversification of coevolving
+marine Synechococcus and a virus. Proc. Natl. Acad. Sci. USA 109:4544–49
+49. McBride RC, Ogbunugafor CB, Turner PE. 2008. Robustness promotes evolvability of thermotolerance
+in an RNA virus. BMC Evol. Biol. 8:231
+50. McBride RC, Turner PE. 2008. Genetic robustness and evolvability of viruses. Microbe 3:409–15
+51. Mi S, Lee X, Li X, Veldman GM, Finnerty H, et al. 2000. Syncytin is a captive retroviral envelope protein
+involved in human placental morphogenesis. Nature 403:785–89
+52. Mindich L. 2004. Packaging, replication and recombination of the segmented genome of bacteriophage
+ϕ6 and its relatives. Virus Res. 101:83–92
+53. Montville R, Froissart R, Remold SK, Tenaillon O, Turner PE. 2005. Evolution of mutational robustness
+in an RNA virus. PLoS Biol. 3:e381
+54. Morse SS. 1995. Factors in the emergence of infectious diseases. Emerg. Infect. Dis. 1:7–15
+www.annualreviews.org • On the Biological Success of Viruses
+539
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+55. Muller HJ. 1932. Some genetic aspects of sex. Am. Nat. 66:118–38
+56. Ogbunugafor CB, Alto BW, Overton TO, Bhushan A, Morales NM, Turner PE. 2013. Evolution of
+increased survival in RNA viruses specialized on cancer-derived cells. Am. Nat. 181(5):585–95
+57. Ogbunugafor CB, Basu S, Morales NM, Turner PE. 2010. Combining mathematics and empirical data
+to predict emergence of RNA viruses that differ in reservoir use. Philos. Trans. R. Soc. Lond. B Biol. Sci.
+365:1919–30
+58. Ogbunugafor CB, McBride RC, Turner PE. 2009. Predicting virus evolution: the relationship between
+genetic robustness and evolvability of thermotolerance. Cold Spring Harb. Symp. Quant. Biol. 74:109–18
+59. O’Keefe KJ, Silander OK, McCreery H, Weinreich DM, Wright KM, et al. 2010. Geographic differences
+in sexual reassortment in RNA phage. Evolution 64:3010–23
+60. Pina M, Bize A, Forterre P, Prangishvili D. 2011. The archeoviruses. FEMS Microbiol. Rev. 35:1035–54
+61. Prangishvili D, Forterre P, Garrett RA. 2006. Viruses of the Archaea: a unifying view. Nat. Rev. Microbiol.
+4:837–48
+62. Price PW. 1980. Evolutionary Biology of Parasites. Princeton, NJ: Princeton Univ. Press. 237 pp.
+63. Raoult D, Audic S, Robert C, Abergel C, Renesto P, et al. 2004. The 1.2-megabase genome sequence of
+Mimivirus. Science 306:1344–50
+64. Raoult D, Forterre P. 2008. Redefining viruses: lessons from Mimivirus. Nat. Rev. Microbiol. 6:315–19
+65. Raup DM. 1994. The role of extinction in evolution. Proc. Natl. Acad. Sci. USA 91:6758–63
+66. Remold SK, Rambaut A, Turner PE. 2008. Evolutionary genomics of host adaptation in vesicular stom-
+atitis virus. Mol. Biol. Evol. 25:1138–47
+67. Riede I. 1987. Receptor specificity of the short tail fibres (gp12) of T-even type Escherichia coli phages.
+Mol. Gen. Genet. 206:110–15
+68. Roossinck MJ. 2011. The good viruses: viral mutualistic symbioses. Nat. Rev. Microbiol. 9:99–108
+69. Rubach JK, Wasik BR, Rupp JC, Kuhn RJ, Hardy RW, Smith JL. 2009. Characterization of purified
+Sindbis virus nsP4 RNA-dependent RNA polymerase activity in vitro. Virology 384:201–8
+70. Sanju´an R, Cuevas JM, Furi´o V, Holmes EC, Moya A. 2007. Selection for robustness in mutagenized
+RNA viruses. PLoS Genet. 3:e93
+71. Silander OK, Weinreich DM, Wright KM, O’Keefe KJ, Rang CU, et al. 2005. Widespread genetic
+exchange among terrestrial bacteriophages. Proc. Natl. Acad. Sci. USA 102:19009–14
+72. Simpson GG. 1944. Tempo and Mode in Evolution. New York: Columbia Univ. Press. 237 pp.
+73. Strauss JH, Strauss EG. 1994. The alphaviruses: gene expression, replication, and evolution. Microbiol.
+Rev. 58:491–562
+74. Suttle CA. 2007. Marine viruses—major players in the global ecosystem. Nat. Rev. Microbiol. 5:801–12
+75. Taylor LH, Latham SM, Woolhouse ME. 2001. Risk factors for human disease emergence. Philos. Trans.
+R. Soc. Lond. B Biol. Sci. 356:983–89
+76. Thal MA, Wasik BR, Posto J, Hardy RW. 2007. Template requirements for recognition and copying by
+Sindbis virus RNA-dependent RNA polymerase. Virology 358:221–32
+77. Turner PE. 2003. Searching for the advantages of virus sex. Orig. Life Evol. Biosph. 33:95–108
+78. Turner PE. 2005. Parasitism between co-infecting bacteriophages. Adv. Ecol. Res. 37:309–32
+79. Turner PE, Burch CL, Hanley KA, Chao L. 1999. Hybrid frequencies confirm limit to coinfection in the
+RNA bacteriophage ϕ6. J. Virol. 73:2420–24
+80. Turner PE, Chao L. 1998. Sex and the evolution of intrahost competition in RNA virus ϕ6. Genetics
+150:523–32
+81. Turner PE, Chao L. 2003. Escape from Prisoner’s Dilemma in RNA phage ϕ6. Am. Nat. 161:497–505
+82. Turner PE, Elena SF. 2000. Cost of host radiation in an RNA virus. Genetics 156:1465–70
+83. Turner PE, McBride RC, Duffy S, Montville R, Wang LS, et al. 2012. Evolutionary genomics of host-use
+in bifurcating demes of RNA virus ϕ6. BMC Evol. Biol. 12:153
+84. Turner PE, McBride RC, Zeyl CW. 2009. Sexual exploits in experimental evolution. In Experimental
+Evolution: Concepts, Methods and Applications of Selection Experiments, ed. T Garland, MR Rose, pp. 479–
+521. Berkeley: Univ. Calif. Press
+85. Turner PE, Morales NM, Alto BW, Remold SK. 2010. Role of evolved host breadth in the initial emer-
+gence of an RNA virus. Evolution 64:3273–86
+540
+Wasik· Turner
+Changes may still occur before final publication online and in print
+
+MI67CH25-Turner
+ARI
+19 June 2013
+8:14
+86. Vidaver AK, Koski RK, Van Etten JL. 1973. Bacteriophage ϕ6: a lipid-containing virus of Pseudomonas
+phaseolicola. J. Virol. 11:799–805
+87. Wagner A. 2005. Robustness and Evolvability in Living Systems. Princeton, NJ: Princeton Univ. Press.
+367 pp.
+88. Wagner A, Altenberg L. 1996. Perspective: complex adaptations and the evolution of evolvability. Evolution
+50:967–76
+89. Walsh D, Mohr I. 2011. Viral subversion of the host protein synthesis machinery. Nat. Rev. Microbiol.
+9:860–75
+90. Whitfield JB. 2002. Estimating the age of the polydnavirus/braconid wasp symbiosis. Proc. Natl. Acad. Sci.
+USA 99:7508–13
+91. Whitman WB, Coleman DC, Wiebe WJ. 1998. Prokaryotes: the unseen majority. Proc. Natl. Acad. Sci.
+USA 95:6578–83
+92. Wilke CO, Wang JL, Ofria C, Lenski RE, Adami C. 2001. Evolution of digital organisms at high mutation
+rates leads to survival of the flattest. Nature 412:331–33
+93. Wolfe ND, Switzer WM, Carr JK, Bhullar VB, Shanmugam V, et al. 2004. Naturally acquired simian
+retrovirus infections in central African hunters. Lancet 363:932–37
+www.annualreviews.org • On the Biological Success of Viruses
+541
+Changes may still occur before final publication online and in print
+
