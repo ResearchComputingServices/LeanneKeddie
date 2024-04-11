@@ -4,7 +4,8 @@ import fitz
 import random
 from pprint import pprint
 
-from BoundingBox import BoundingBox
+from BoundingBoxGenerator import BoundingBoxGenerator as BBGen
+from ExtractedDocument import ExtractedDocument, DocumentPage
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -22,52 +23,59 @@ LABEL_DICT = {  '0':  'Caption',
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def clean_text(original_text : str) -> str:
+    cleaned_text = ''
+    
+    for char in original_text:
+        # replace new line with space
+        if ord(char) == 10:
+            char = ' '
+        
+        # only add printable ascii characters
+        if ord(char) > 31 and ord(char) < 127:
+            cleaned_text += char
+
+    return cleaned_text.strip()
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 def main():
 
     pdf_file_path = './EMN 2020-1.pdf'
-    labels_files = sorted(glob('labels/*.txt'))
-
-    fitz_doc = fitz.open(pdf_file_path)
+    labels_files = sorted(glob('./data/exp9/labels/*.txt'))
     
-    print(f'# of labels file: {len(labels_files)}')
-    print(f'# of pages in pdf: {len(fitz_doc)}')
+    fitz_document = fitz.open(pdf_file_path)
     
-    for i, page in enumerate(fitz_doc):
+    extracted_document = ExtractedDocument()
+    extracted_document.file_path=pdf_file_path
+    
+    for i,fitz_page in enumerate(fitz_document):
+        bb_generator = BBGen(fitz_page.rect.x1, 
+                             fitz_page.rect.y1, 
+                             LABEL_DICT)
         
-        # get the page dimensions
-        rect = page.rect 
-        print(f'page dimensions (w,h): {rect.x1, rect.y1}')
-        page_width = rect.x1
-        page_height = rect.y1
-        
-        # get the labelled bounding boxes
-        label_file = open(labels_files[i],'r',encoding='utf-8')
-        lines = label_file.readlines()
-
-        print(labels_files[i])
-        
-        for line in lines:
-            (label_key,x0,y0,w,h) = line.split(' ')
-            x_c = float(x0)
-            y_c = float(y0)
-            half_w = float(w)
-            half_h = float(h)
-            label = LABEL_DICT[label_key]
-                            
-            bb_x0 = page_width*(x_c-half_w)
-            bb_x1 = page_width*(x_c+half_w)
+        bb_list = bb_generator.get_bounding_boxes_from_file(labels_files[i])
             
-            bb_y0 = page_height*(y_c-half_h)
-            bb_y1 = page_height*(y_c+half_h)        
-               
-            bb_rect = fitz.Rect(bb_x0,bb_y0,bb_x1,bb_y1)
-
-            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            print(bb_rect)
-            print(label,page.get_textbox(bb_rect))
+        extracted_page = DocumentPage(i)
+                
+        for bb in bb_list:
             
-        input('========================================================')        
-                    
+            text = ''
+            
+            if bb.label == 'Table':
+                text = fitz_page.find_table(bb.get_rect())
+            else:
+                text = clean_text(fitz_page.get_textbox(bb.get_rect()))
+            
+            extracted_page.add_text_block(text=text,
+                                          conf=bb.confidence,
+                                          label=bb.label)
+           
+        extracted_document.add_page(extracted_page)         
+
+        print(extracted_page.get_text())
+        input()
+        
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 if __name__ == '__main__':

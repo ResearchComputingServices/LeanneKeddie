@@ -22,14 +22,15 @@ class BoundingBoxGenerator:
             bounding_box_file = open(file_path,'r',encoding='utf-8')
             
             bounding_boxes = self._generate_bounding_boxes(bounding_box_file.readlines())
+
+            if sort_boxes:
+                bounding_boxes.sort()
+
+            if clean_boxes:
+                bounding_boxes = self._clean_boxes(bounding_boxes)
+        
         except FileNotFoundError:
             print(f'label file not found: {file_path}')
-
-        if sort_boxes:
-            bounding_boxes.sort()
-
-        if clean_boxes:
-            bounding_boxes = self._clean_boxes(bounding_boxes)
 
         return bounding_boxes
  
@@ -89,6 +90,6 @@ class BoundingBoxGenerator:
         y0 = int(self.page_height*(y_c-0.5*half_h))
         y1 = int(self.page_height*(y_c+0.5*half_h))
                 
-        return x0,y0,x1,y1,label, conf  
+        return x0,y0,x1,y1,label,float(conf)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
