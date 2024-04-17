@@ -16,14 +16,12 @@ class Datum:
     """
     def __init__(self, 
                  sentence = '',
-                 confidence = -1.,
                  label= '',
                  encoding = [],
                  reduced_encoding = []):
         
         self.sentence = sentence
         self.label = label
-        self.confidence = confidence        
         self.encoding = [float(x) for x in encoding]
         self.reduced_encoding = [float(x) for x in reduced_encoding]
 
@@ -35,7 +33,6 @@ class Datum:
         """
         return {'sentence' : self.sentence,
                 'label_string' : self.label,
-                'confidence' : str(self.confidence),
                 'encoding' : [str(x) for x in self.encoding],
                 'reduced_encoding' : [str(x) for x in self.reduced_encoding]}
 
@@ -50,9 +47,10 @@ class DataSet:
                  file_path = ''):
    
         self.data_list = []
-        self.embedding = ''
-        self.reduced = ''
         self.labels = {}
+
+        self.is_embedded = False
+        self.is_reduced = False
 
         if file_path.endswith('.json'):
             self.load_json(file_path)
@@ -94,7 +92,13 @@ class DataSet:
         Returns:
             np.ndarray: embeddings in a numpy array
         """
-        return np.array([d.encoding for d in self.data_list])
+        
+        embeddings_list = []
+        
+        if self.is_embedded:
+            embeddings_list = [d.encoding for d in self.data_list]
+        
+        return np.array(embeddings_list)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -104,7 +108,13 @@ class DataSet:
         Returns:
             np.ndarray: reduced embeddings in a numpy array
         """
-        return np.array([d.reduced_encoding for d in self.data_list])
+        
+        reduced_embeddings_list = []
+        
+        if self.is_reduced:
+            reduced_embeddings_list = [d.reduced_encoding for d in self.data_list]
+        
+        return np.array(reduced_embeddings_list)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -160,7 +170,7 @@ class DataSet:
 
     def get_label_from_index(self, 
                              index : int) -> str:
-        """returns the string label corresponding to teh value index
+        """returns the string label corresponding to the arg index
 
         Args:
             index (int): label indice
@@ -197,8 +207,9 @@ class DataSet:
         """
         json_dict = json.load(open(file_path,'r'))
 
-        self.embedding = json_dict['embedding']
-        self.reduced = json_dict['reduced']
+
+        self.is_embedded = json_dict['is_embedded']
+        self.is_reduced = json_dict['is_reduced']
         self.file_path = json_dict['file_path']
         self.labels = json_dict['labels']
 
@@ -229,8 +240,7 @@ class DataSet:
 
                 # Add datum to data set
                 self.data_list.append(Datum(sentence=re.sub(r'[^\x00-\x7F]+',' ', item[1]),
-                                            label=item[0],
-                                            confidence=-1.))
+                                            label=item[0]))
   
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -241,9 +251,9 @@ class DataSet:
             dict: JSON dictionary representation of the DateSet
         """
         json_dict = {'file_path' : self.file_path,
-                     'embedding' : self. embedding,
-                     'reduced' : self.reduced,
                      'labels' : self.labels,
+                     'is_reduced' : self.is_reduced,
+                     'is_embedded' : self.is_embedded,
                      'data' : []}        
 
         for datum in self.data_list:
@@ -264,11 +274,14 @@ class DataSet:
         embeddings = sentence_transformer.encode(   sentences=self.get_sentences(), 
                                                     show_progress_bar=True,
                                                     convert_to_numpy=True)
+        
         for i, embedding in enumerate(embeddings):
             self.data_list[i].encoding = list(embedding)
+            
+        self.is_embedded = True
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def getnumber_of_tokens(self,
+    def get_number_of_tokens(self,
                              sentence_transformer : SentenceTransformer) -> None:
         """Display the number of tokens for each sentence in the data set
 
@@ -301,6 +314,8 @@ class DataSet:
               
         for i, reduced in enumerate(reduced_embeddings):
             self.data_list[i].reduced_encoding = list(reduced)
+            
+        self.is_reduced = True
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -332,7 +347,23 @@ class DataSet:
                 output_file.write(" ".join([str(i) for i in datum.reduced_encoding])+'\n')
 
             output_file.write('\n\n')
+       
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
+    
+    def save_topic_reduced_embedding(   self,
+                                        arg_label : str,
+                                        file_path : str):
+        """Writes the reduced embeddings of all sentences with label equal to arg_label
 
+        Args:
+            arg_label (str): Write sentences with this label
+            file_path (str): File path where reduced embeddings should be written
+        """
+
+        with open(file_path, 'w+', encoding='utf-8') as output_file:                        
+            for datum in self.data_list:
+                if datum.label == arg_label:
+                    output_file.write("^".join([str(i) for i in datum.reduced_encoding]) + '^' + datum.sentence + '\n')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def clean_data(self,
@@ -355,21 +386,4 @@ class DataSet:
         
         self.data_list = cleaned_data_list
         
- # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
-    
-    def save_topic_reduced_embedding(   self,
-                                        arg_label : str,
-                                        file_path : str):
-        """Writes the reduced embeddings of all sentences with label equal to arg_label
-
-        Args:
-            arg_label (str): Write sentences with this label
-            file_path (str): File path where reduced embeddings should be written
-        """
-
-        with open(file_path, 'w+', encoding='utf-8') as output_file:                        
-            for datum in self.data_list:
-                if datum.label == arg_label:
-                    output_file.write("^".join([str(i) for i in datum.reduced_encoding]) + '^' + datum.sentence + '\n')
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
