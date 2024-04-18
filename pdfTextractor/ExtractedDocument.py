@@ -1,6 +1,6 @@
-from dataclasses import dataclass, field
-from typing import List
+import json
 
+from dataclasses import dataclass
 from pprint import pprint
 
 import pysbd
@@ -35,11 +35,30 @@ class DocumentTextBlock:
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     def _split_sentences(self,
-                         text) -> None:
+                         text) -> list:
         seg = pysbd.Segmenter(language='en', clean=False)
         return seg.segment(text)
     
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    def to_dict(self) -> dict:
+        """returns the contains of the object in dictionary form
+
+        Returns:
+            dict: dictionary containing all the data of the object
+        """
+        
+        json_dict =  {  'conf' : self.conf,
+                        'label' : self.label,
+                        'sentences' : []}
+        
+        for sentence in self.sentences:
+            json_dict['sentences'].append(sentence)
+        
+        return json_dict
+
+# =============================================================================
+
 @dataclass
 class DocumentPage:
     
@@ -48,7 +67,7 @@ class DocumentPage:
                  page_num : int):
         
         self.page_number = page_num
-        
+        self.current_block_num = 0
         self.document_text_blocks = []
     
      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,19 +117,39 @@ class DocumentPage:
             page_text += text_block.text + '\n'    
             
         return page_text
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-@dataclass
-class ExtractedDocument:
-    """
-    dataclass representing the data extracted from a pdf by fitz
-    """
-    document_pages : List = field(default_factory=lambda: [])
-
-    file_path : str = ''
     
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
+    def to_dict(self) -> dict:
+        """returns the contains of the object in dictionary form
+
+        Returns:
+            dict: dictionary containing all the data of the object
+        """
+        
+        json_dict =  {  'page_number' : self.page_number,
+                        'document_text_blocks' : []}
+        
+        for text_block in self.document_text_blocks:
+            json_dict['document_text_blocks'].append(text_block.to_dict())
+        
+        return json_dict
+    
+# =============================================================================
+
+class ExtractedDocument:
+    """
+    Class containing the text data extracted from a pdf by fitz
+    """
+   
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    def __init__(self,
+                 file_path : str):
+        self.document_pages = []
+        self.file_path = file_path
+        self.current_page_num = 0
+        
     def __iter__(self):
         self.current_page_num = 0
         return self
@@ -125,6 +164,22 @@ class ExtractedDocument:
     
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
+    def _get_json_dict(self) -> dict:
+        """Convert the DataSet into a json dictionary
+
+        Returns:
+            dict: JSON dictionary representation of the DateSet
+        """
+        json_dict = {'file_path' : self.file_path,
+                     'document_pages' : []}        
+
+        for page in self.document_pages:
+            json_dict['document_pages'].append(page.to_dict())
+
+        return json_dict
+    
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     @property
     def num_pages(self) -> int:
         """returns the number of elements in the document_pages list
@@ -133,6 +188,13 @@ class ExtractedDocument:
             int: # of elements in self.document_pages
         """
         return len(self.document_pages)
+    
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    def display(self) -> None:
+        """Display the contents of the ExtractedDocument to the screen
+        """
+        pprint(self._get_json_dict())
     
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
@@ -147,7 +209,21 @@ class ExtractedDocument:
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
     
     def add_page(self,
-                 page : DocumentPage):
+                 page : DocumentPage) -> None:
         
         self.document_pages.append(page)
+    
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+    
+    def save_as_json(self,
+                     file_path : str) -> None:
+        
+        """Save the DataSet as a JSON file
+
+        Args:
+            file_path (str): File path to save DataSet
+        """
+        with open(file_path, "w+") as final:
+            json.dump(self._get_json_dict(), final)
+            
     
