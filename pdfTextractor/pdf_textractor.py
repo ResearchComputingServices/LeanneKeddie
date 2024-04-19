@@ -1,3 +1,4 @@
+import os
 import logging
 
 import fitz
@@ -5,6 +6,7 @@ import fitz
 from pdf_textractor_config import *
 from BoundingBoxGenerator import BoundingBoxGenerator as BBGen
 from ExtractedDocument import ExtractedDocument, DocumentPage
+from DLDetector import perform_document_layout_analysis
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def extract_text_from_page(fitz_page : fitz.Page,
@@ -55,10 +57,29 @@ def pdf_extract_text(pdf_file_path : str,
     else:
         fitz_extract_text(fitz_document, 
                           label_files, 
-                          extracted_document)
+                          extracted_document) 
     
     return extracted_document
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def pdf_textractor( pdf_file_path : str,
+                    image_output_path : str,
+                    label_file_output_path : str)-> ExtractedDocument:
     
+    if not os.path.isfile(pdf_file_path):
+        logging.error(f'PDF not found at {pdf_file_path}')
+        return
+
+    if not os.path.exists(image_output_path):
+        logging.warning(f'Image output path not found {image_output_path}. Generating.')
+
+    if not os.path.exists(label_file_output_path):
+        logging.warning(f'Image output path not found {label_file_output_path}. Generating.')
+
+    perform_document_layout_analysis(pdf_file_path=pdf_file_path,
+                                     image_output_path=image_output_path,
+                                     label_file_output_path=label_file_output_path)
+    
+    return pdf_extract_text(pdf_file_path=pdf_file_path,
+                            label_file_output_path=label_file_output_path)
