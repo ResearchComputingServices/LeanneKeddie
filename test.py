@@ -1,0 +1,3 @@
+from ExDocGen.ExtractedDocumentGenerator import ExtractedDocumentGenerator
+
+doc_gen = ExtractedDocumentGenerator()
