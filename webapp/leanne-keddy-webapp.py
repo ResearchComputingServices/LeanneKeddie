@@ -1,6 +1,7 @@
 import os
 import base64
 from datetime import datetime
+import shutil
 
 import streamlit as st
 from streamlit_image_coordinates import streamlit_image_coordinates
@@ -22,8 +23,10 @@ from ExDocGen.ExtractedDocumentGenerator import ExtractedDocumentGenerator
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 USER_DATA_PATH = '.user-data'
+TMP_USER_DATA_PATH = 'tmp'
 PUBLIC_DATA_PATH = os.path.join(USER_DATA_PATH, 'public')
 PROXY_STATEMENTS_PATH = '.proxy-statements'
+HIGHLIGHTED_PDF = 'highlighed_'
 
 LOGGED_IN_KEY = 'LOGGED_IN_KEY'
 USER_CRED_KEY = 'USER_CRED_KEY'
@@ -112,6 +115,19 @@ def home_page():
         
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def create_tmp_file(pdf_file_name : str):
+    # build src and dst paths
+    src_path = os.path.join(PROXY_STATEMENTS_PATH, pdf_file_name)
+    
+    dst_path = os.path.join(USER_DATA_PATH, st.session_state[USER_CRED_KEY])
+    dst_path = os.path.join(dst_path, TMP_USER_DATA_PATH)
+    dst_path = os.path.join(dst_path,HIGHLIGHTED_PDF+pdf_file_name)
+    
+    # copy file to tmp
+    shutil.copy(src_path, dst_path)
+    st.session_state[PDF_FILE_PATH_KEY] = dst_path
+
+
 def create_data_set_page():   
     
     selected_file = st.sidebar.selectbox(   label='Available Proxy Statements',
@@ -121,10 +137,13 @@ def create_data_set_page():
     select_file_button = st.sidebar.button('Select')
     
     if select_file_button and selected_file:
-        st.session_state[PDF_FILE_PATH_KEY] = os.path.join(PROXY_STATEMENTS_PATH, selected_file)
+        #st.session_state[PDF_FILE_PATH_KEY] = os.path.join(PROXY_STATEMENTS_PATH, selected_file)
+        create_tmp_file(selected_file)
         st.session_state[PDF_SELECTED_KEY] = True
+        print(st.session_state[PDF_FILE_PATH_KEY])
            
     if st.session_state[PDF_SELECTED_KEY]:
+                
         with open(str(st.session_state[PDF_FILE_PATH_KEY]) , 'rb') as pdf_file:
             base64_pdf = base64.b64encode(pdf_file.read()).decode("utf-8")
             pdf_display =   f"""
@@ -140,9 +159,9 @@ def create_data_set_page():
                         on_click=add_label_cb,
                         args=[label_name,picked_colour])
     
-    selected_label = st.sidebar.selectbox(  label='Select Label',
-                                            options=get_labels(),
-                                            index=None) 
+    st.session_state[ACTIVE_LABEL_KEY] = st.sidebar.selectbox(  label='Select Label',
+                                                                options=get_labels(),
+                                                                index=None) 
 
     
     selected_text = st.sidebar.text_area(label='Selected Text',
@@ -151,24 +170,7 @@ def create_data_set_page():
     st.sidebar.button('Add Text',
                       on_click=add_text_cb, 
                       args=[selected_text])
-    
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
-    
-def open_pdf_page():
-    uploaded_file = st.file_uploader("Choose a file")
-    
-    pdf_column, display_column = st.columns([2,1])
-     
-    if uploaded_file:
-        base64_pdf = base64.b64encode(uploaded_file.getvalue()).decode("utf-8")
-        pdf_display =   f"""
-                        <iframe src="data:application/pdf;base64,{base64_pdf}" width="800px" height="2100px" type="application/pdf"></iframe>
-                        """
-        pdf_column.markdown(pdf_display, unsafe_allow_html=True)
-            
-    if display_column.button('submit'):
-        display_column.markdown(str(pyperclip.paste()))
-    
+       
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # def _page():
 #     pass
@@ -182,13 +184,11 @@ st.set_page_config(page_title="Definitive A Corporate Proxy Statement Analysis T
 
 st.sidebar.title('Navigation')
 user_page_selection = st.sidebar.radio('Pages', 
-                                       options=['Home', 'Create Data Set', 'Open PDF'],
+                                       options=['Home', 'Create Data Set'],
                                        disabled=(not st.session_state[LOGGED_IN_KEY]))
 
 if user_page_selection == 'Create Data Set':
     create_data_set_page()
-elif user_page_selection == 'Open PDF':
-    open_pdf_page()
 else:
     home_page()
 
