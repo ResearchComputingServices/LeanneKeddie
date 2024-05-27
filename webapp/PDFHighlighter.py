@@ -7,52 +7,33 @@ from pprint import pprint
 class PDFHighlighter():
 	
 	def __init__(	self, 
-					doc: Path, 
-					page: int):
-	 
-		self.doc = fitz.open(doc)
-		self.PAGE = self.doc[page - 1]
-
+					doc_path : Path):
+    
+		self.file_path = doc_path
+		self.doc = fitz.open(doc_path)
+		
 	def highlight(	self, 
 					phrase : str,
      				colour : tuple) -> None:
 
-		for rect in self.PAGE.search_for(phrase):	
-			polygons = self.rect_2_poly(rect)
+		for page in self.doc:
+			for rect in page.search_for(phrase):	
+				polygons = self.rect_2_poly(rect)
+	
+				rects_merged = unary_union(polygons)
+				points = list(rects_merged.exterior.coords)
+				self.draw_shape(page, points, colour)
    
-			rects_merged = unary_union(polygons)
-			points = list(rects_merged.exterior.coords)
-			self.draw_shape(points, colour)
-   
-
-	def save(	self,
-				file_path : str) -> None:
- 
-		self.doc.save(	Path(file_path), 
-                		garbage=1, 
-                  		deflate=True, 
-                    	clean=True)
-
 	def draw_shape(	self, 
+					page : fitz.Page,
 					points : list,
                		color: tuple):
-		shape = self.PAGE.new_shape()
+		shape = page.new_shape()
 		
 		shape.draw_polyline(points)
 		shape.finish(color=(0, 0, 0), fill=color, stroke_opacity=0.15, fill_opacity=0.15)
 		shape.commit()
-		
-   
-	def get_text_rects(self):
-
-		rects = self.PAGE.search_for(self.content)
-  
-		polygons = [self.rect_2_poly(r) for r in rects] 
-
-		rectsMerged = unary_union(polygons) 
-
-		self.points = list(rectsMerged.exterior.coords)
-		
+			
 	def rect_2_poly(	self, 
 						rect: fitz.Rect):
 
@@ -63,9 +44,22 @@ class PDFHighlighter():
 
 		return Polygon([upperLeft, upperRight, lowerRight, lowerLeft])
 
+	def save(	self,
+				file_path = None) -> None:
+ 
+		if not file_path:
+			file_path = self.file_path
+
+		self.doc.saveIncr()
+ 
+		# self.doc.save(	Path(file_path), 
+        #         		garbage=1, 
+        #           		deflate=True, 
+        #             	clean=True)
+
 if __name__ == "__main__":  
 
-	# highlighter = PDFHighlighter(Path("test_printed.pdf"), page = 1)
+	# highlighter = PDFHighlighter(Path("test.pdf"))
 	# highlighter.highlight(	phrase = 'these two branches are related to each',
     #                  		colour=(1,0,0))
  
@@ -75,10 +69,11 @@ if __name__ == "__main__":
 	# highlighter.highlight(phrase='the calculus of infinitesimals',
     #                      	colour=(0,0,1))
  
-	highlighter = PDFHighlighter(Path(".proxy-statements/AAPL2017.pdf"), page = 6)
-	highlighter.highlight('Compensation and Performance Highlights', (0,1,0))
+	highlighter = PDFHighlighter(Path('AAPL2017.pdf'))
+	highlighter.highlight(	phrase="Any matter intended for the Board, or for any individual member of the Board, should be directed to Apple", 
+ 							colour=(0,1,0))
  
-	# highlighter = PDFHighlighter(Path("AMAT_ 2017_one_page.pdf"), page = 1)
+	# highlighter = PDFHighlighter(Path("AMAT_ 2017_one_page.pdf"))
 	# highlighter.highlight('we achieved record performance', (0,1,0))
  
 	highlighter.save('highlighted.pdf')
