@@ -20,13 +20,16 @@ from PDFHighlighter import PDFHighlighter
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Global Constants
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+PROXY_STATEMENTS_PATH = '.proxy-statements'
 USER_DATA_PATH = '.user-data'
+PUBLIC_DATA_PATH = '.public-data'
+
 TMP_USER_DATA_PATH = 'tmp'
 SESSION_DIR_PATH = 'session'
-PUBLIC_DATA_PATH = os.path.join(USER_DATA_PATH, 'public')
-PROXY_STATEMENTS_PATH = '.proxy-statements'
+
 HIGHLIGHTED_PDF = 'highlighed_'
+
+JSON_EXT = '.json'
 
 LOGGED_IN_KEY = 'LOGGED_IN_KEY'
 USER_CRED_KEY = 'USER_CRED_KEY'
@@ -37,6 +40,8 @@ LABELS_KEY = 'LABELS_KEY'
 ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
 PDF_HIGHLIGHTER_KEY = 'PDF_HIGHLIGHTER_KEY'
 LABELLED_SENTENCES_KEY = 'LABELLED_SENTENCES_KEY'
+ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'
+
 
 if LOGGED_IN_KEY not in st.session_state:
     st.session_state[LOGGED_IN_KEY] = False
@@ -65,6 +70,10 @@ if PDF_HIGHLIGHTER_KEY not in st.session_state:
 if LABELLED_SENTENCES_KEY not in st.session_state:
     st.session_state[LABELLED_SENTENCES_KEY] = {}
 
+if ACTIVE_DATA_SET_KEY not in st.session_state:
+    st.session_state[ACTIVE_DATA_SET_KEY] = None
+
+
 # if  not in st.session_state:
 #     st.session_state[] =
 
@@ -81,6 +90,7 @@ def session_to_console() -> None:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Helper Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 def check_credentials(user_creds : str) -> bool:
     user_path = os.path.join(USER_DATA_PATH, user_creds)    
     return os.path.exists(user_path)
@@ -146,7 +156,7 @@ def unique_label(label_name : str) -> bool:
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def add_text_cb(selected_text : str) -> None:
+def add_labelled_text_cb(selected_text : str) -> None:
     # check that a label is selected if not show error msg
     if not st.session_state[ACTIVE_LABEL_KEY]:
         st.sidebar.error('No Label Selected.')
@@ -187,14 +197,36 @@ def add_label_cb(label_name : str,
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def save_session_cb():
-    output_path = os.path.join(USER_DATA_PATH,USER_CRED_KEY,SESSION_DIR_PATH)
-    
+def select_file_cb(pdf_file_name : str) -> None:
+    if pdf_file_name:
+        st.session_state[PDF_ORIGINAL_FILE_PATH_KEY] = pdf_file_name
+        create_tmp_file(pdf_file_name)
+        st.session_state[PDF_HIGHLIGHTER_KEY] = PDFHighlighter(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY])
+        st.session_state[PDF_SELECTED_KEY] = True 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def select_label_cb(selected_label : str) -> None:
+    if selected_label:
+        st.session_state[ACTIVE_LABEL_KEY] = selected_label
+    else:
+        st.session_state[ACTIVE_LABEL_KEY] = ''
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def save_session_cb(file_name : str,
+                    save_type : str) -> None:
+    
+    # get the output path to save the file too
+    output_file_path = os.path.join(PUBLIC_DATA_PATH, file_name+JSON_EXT)
+    if save_type == 'private':
+        output_file_path = os.path.join(USER_DATA_PATH,USER_CRED_KEY,file_name+JSON_EXT)
+        
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def load_session_cb():
     pass
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def export_session_cb():
@@ -209,6 +241,20 @@ def clear_session_cb():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Page Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def save_data_set_page():
+    name_col, type_cal = st.sidebar.columns([2,1])
+    
+    file_name = name_col.text_input('Filename')
+    save_type = type_cal.radio( '',
+                                options = ['private', 'public'])
+    st.sidebar.button(  'Save',
+                        on_click=save_session_cb,
+                        args=[file_name, save_type])
+    
+    
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 def home_page():
     st.title("Keddie Tool")
     st.markdown("""This tool enables supervised topic modelling of form DEF 14A 
@@ -230,20 +276,8 @@ def home_page():
             st.rerun()
         
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def select_file_cb(pdf_file_name : str) -> None:
-    if pdf_file_name:
-        st.session_state[PDF_ORIGINAL_FILE_PATH_KEY] = pdf_file_name
-        create_tmp_file(pdf_file_name)
-        st.session_state[PDF_HIGHLIGHTER_KEY] = PDFHighlighter(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY])
-        st.session_state[PDF_SELECTED_KEY] = True 
 
-def select_label_cb(selected_label : str) -> None:
-    if selected_label:
-        st.session_state[ACTIVE_LABEL_KEY] = selected_label
-    else:
-        st.session_state[ACTIVE_LABEL_KEY] = ''
-
-def create_data_set_page():   
+def add_data_page():   
     
     with st.sidebar.popover(f'Select Proxy Statement: {st.session_state[PDF_ORIGINAL_FILE_PATH_KEY]}'):
         selected_file = st.selectbox(   label='Available Proxy Statements',
@@ -285,13 +319,10 @@ def create_data_set_page():
                                          key='SELECTED_TEXT_KEY')
     
     st.sidebar.button('Add Text',
-                      on_click=add_text_cb, 
+                      on_click=add_labelled_text_cb, 
                       args=[selected_text])
-    
-   
        
     # Main Page Widgets
-       
     if st.session_state[PDF_SELECTED_KEY]:
                 
         with open(str(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY]) , 'rb') as pdf_file:
@@ -300,10 +331,34 @@ def create_data_set_page():
                         <iframe src="data:application/pdf;base64,{base64_pdf}" width="800px" height="1000px" type="application/pdf"></iframe>
                         """
             st.markdown(pdf_display, unsafe_allow_html=True)   
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# def _page():
-#     pass
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def load_data_set_page():
+    pass
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def review_data_set_page():
+    pass
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def create_data_set_cb(data_set_name : str) -> None:
+    # TODO: check if there is a data set with the same name in public or private
+    # data folders
+    
+    st.session_state[ACTIVE_DATA_SET_KEY] = {   'name' :        data_set_name,
+                                                'labels' :      [],
+                                                'pdfs' :        [],
+                                                'labelled text':[]}
+
+def create_data_set_page():
+    data_set_name = st.sidebar.text_input('Data Set Name:')
+    st.sidebar.button(  'Create',
+                        on_click=create_data_set_cb,
+                        args=[data_set_name])
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initialize the page
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -313,11 +368,24 @@ st.set_page_config(page_title="Definitive A Corporate Proxy Statement Analysis T
 
 st.sidebar.title('Navigation')
 user_page_selection = st.sidebar.radio('Pages', 
-                                       options=['Home', 'Create Data Set'],
+                                       options=['Home',
+                                                'Create New Data Set',
+                                                'Load Data Set',
+                                                'Add Data',
+                                                'Review',
+                                                'Save'],
                                        disabled=(not st.session_state[LOGGED_IN_KEY]))
 
-if user_page_selection == 'Create Data Set':
+if user_page_selection == 'Create New Data Set':
     create_data_set_page()
+elif user_page_selection == 'Load Data Set':
+    load_data_set_page()
+elif user_page_selection == 'Add Data':
+    add_data_page()
+elif user_page_selection == 'Review':
+    review_data_set_page()
+elif user_page_selection == 'Save':
+    save_data_set_page()
 else:
     home_page()
 
