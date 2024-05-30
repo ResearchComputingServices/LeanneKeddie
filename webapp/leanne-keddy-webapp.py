@@ -195,9 +195,58 @@ def get_data_set_files():
                                         st.session_state[USER_CRED_KEY],
                                         PRIVATE_DATA_SET_PATH)
     
-    return [os.path.basename(x) for x in glob.glob(user_data_sets_path+'/*.json')]
     
+    user_data_sets = [os.path.basename(x) for x in glob.glob(user_data_sets_path+'/*.json')]
+    
+    public_data_sets = [os.path.basename(x) for x in glob.glob(PUBLIC_DATA_PATH+'/*.json')]
+       
+    return user_data_sets + public_data_sets
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+def get_label_from_id(label_id : int) -> dict:
+    labels_dict = st.session_state[ACTIVE_DATA_SET_KEY]['labels']
 
+    for label in labels_dict:
+        if label['label-id'] == label_id:
+            return label
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_labelled_text_from_file_id(file_id : int) -> list:
+    
+    labelled_texts = []
+    
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+        if labelled_text['file-id'] == file_id:
+            labelled_texts.append(labelled_text)
+        
+    return labelled_texts
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def apply_previous_highlights() -> None:
+    
+    file_id = st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILE_ID]
+    labelled_texts = get_labelled_text_from_file_id(file_id)
+    
+    for labelled_text in labelled_texts:
+    
+        label_colour = get_label_from_id(labelled_text['label-id'])['colour']
+        text = labelled_text['text']
+    
+        st.session_state[PDF_HIGHLIGHTER_KEY].highlight(phrase=text,
+                                                        colour=label_colour)      
+    st.session_state[PDF_HIGHLIGHTER_KEY].save()
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_file_from_id(file_id : int) -> dict:
+        
+    for file_dict in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
+        if file_dict[PROXY_STATEMENT_FILE_ID] == file_id:
+            return file_dict
+
+    return {PROXY_STATEMENT_FILENAME : 'Unknown', PROXY_STATEMENT_FILE_ID : -1}
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,9 +258,14 @@ def load_file_cb(file_name : str):
                                         PRIVATE_DATA_SET_PATH,
                                         file_name)
     
+    if not os.path.exists(data_set_file_path):
+        data_set_file_path = os.path.join(PUBLIC_DATA_PATH, file_name)
+    
     st.session_state[ACTIVE_DATA_SET_KEY] = json.load(open(data_set_file_path))
 
     # TODO: Clear the activate proxy statement and label
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def add_labelled_text_cb(selected_text : str) -> None:
     # check that a label is selected if not show error msg
@@ -257,41 +311,7 @@ def add_label_cb(label_name : str,
         st.sidebar.error(f'Label "{label_name}" already exists')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def get_label_from_id(label_id : int) -> dict:
-    labels_dict = st.session_state[ACTIVE_DATA_SET_KEY]['labels']
-
-    for label in labels_dict:
-        if label['label-id'] == label_id:
-            return label
         
-    return {}
-
-def get_labelled_text_from_file_id(file_id : int) -> list:
-    
-    labelled_texts = []
-    
-    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
-        if labelled_text['file-id'] == file_id:
-            labelled_texts.append(labelled_text)
-        
-    return labelled_texts
-
-def apply_previous_highlights() -> None:
-    
-    file_id = st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILE_ID]
-    labelled_texts = get_labelled_text_from_file_id(file_id)
-    
-    for labelled_text in labelled_texts:
-    
-        label_colour = get_label_from_id(labelled_text['label-id'])['colour']
-        text = labelled_text['text']
-    
-        st.session_state[PDF_HIGHLIGHTER_KEY].highlight(phrase=text,
-                                                        colour=label_colour)      
-    st.session_state[PDF_HIGHLIGHTER_KEY].save()
-
-
 def select_file_cb(pdf_file_name : str) -> None:
     
     if pdf_file_name:
@@ -345,22 +365,6 @@ def save_session_cb(file_name : str,
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def load_session_cb():
-    pass
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def export_session_cb():
-    pass
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def clear_session_cb():
-    session_to_console()
-    pass
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 def create_data_set_cb(data_set_name : str) -> None:
     # TODO: check if there is a data set with the same name in public or private
     # data folders
@@ -383,8 +387,7 @@ def save_data_set_page():
     st.sidebar.button(  'Save',
                         on_click=save_session_cb,
                         args=[file_name, save_type])
-    
-    
+        
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def home_page():
@@ -465,24 +468,24 @@ def load_data_set_page():
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_file_from_id(file_id : int) -> dict:
-    for file_dict in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
-        if file_dict[PROXY_STATEMENT_FILE_ID] == file_id:
-            return file_dict
-
 def review_data_set_page():
     
     data_list = []
     
     for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
-        data_list.append({'Label' : get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME],
-                          'Filename' : get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME],
+        
+        label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]
+        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+        
+        data_list.append({'Label' : label,
+                          'Filename' : filename,
                           'Text' : labelled_text['text']})        
     
     df = pd.DataFrame(data_list)
     
-    edited_df = st.data_editor( df,
-                                use_container_width=True)
+    edited_df = st.data_editor(df, use_container_width=True)
+
+    st.sidebar.button('Update')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
