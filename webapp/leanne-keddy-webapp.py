@@ -465,8 +465,24 @@ def load_data_set_page():
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def get_file_from_id(file_id : int) -> dict:
+    for file_dict in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
+        if file_dict[PROXY_STATEMENT_FILE_ID] == file_id:
+            return file_dict
+
 def review_data_set_page():
-    pass
+    
+    data_list = []
+    
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+        data_list.append({'Label' : get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME],
+                          'Filename' : get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME],
+                          'Text' : labelled_text['text']})        
+    
+    df = pd.DataFrame(data_list)
+    
+    edited_df = st.data_editor( df,
+                                use_container_width=True)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
