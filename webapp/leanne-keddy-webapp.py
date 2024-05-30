@@ -3,6 +3,7 @@ import base64
 import shutil
 import json
 
+import streamlit.components.v1 as components
 import streamlit as st
 
 import pandas as pd
@@ -10,7 +11,8 @@ import glob
 from pprint import pprint
 
 from PDFHighlighter import PDFHighlighter
-# from SentenceClassifier.Classifier import SentenceClassifier
+from SentenceClassifier.Classifier import SentenceClassifier
+
 # from ExDocGen.ExtractedDocumentGenerator import ExtractedDocumentGenerator
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -375,10 +377,21 @@ def create_data_set_cb(data_set_name : str) -> None:
                                                 'labelled-text':    []}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def display_button_cb() -> None:
+    print('\n'*100)
+    print('~'*80)
+    pprint(st.session_state[ACTIVE_DATA_SET_KEY])
+    print('~'*80)
+    pprint(st.session_state[ACTIVTE_PROXY_STATEMENT_KEY])
+    print('~'*80)
+    pprint(st.session_state[ACTIVE_LABEL_KEY])
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Page Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def save_data_set_page():
+def save_and_review_data_set_page():
     name_col, type_cal = st.sidebar.columns([2,1])
     
     file_name = name_col.text_input('Filename')
@@ -387,6 +400,21 @@ def save_data_set_page():
     st.sidebar.button(  'Save',
                         on_click=save_session_cb,
                         args=[file_name, save_type])
+    
+    data_list = []
+    
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+        
+        label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]
+        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+        
+        data_list.append({'Label' : label,
+                          'Filename' : filename,
+                          'Text' : labelled_text['text']})        
+    
+    df = pd.DataFrame(data_list)
+    
+    edited_df = st.data_editor(df, use_container_width=True)
         
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -421,7 +449,7 @@ def add_data_page():
         st.button(  'Select',
                     on_click=select_file_cb,
                     args=[selected_file])
-                         
+    
     with st.sidebar.popover(f'Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}'):
         if st.session_state[ACTIVE_DATA_SET_KEY]:
             label_col, colour_col = st.columns([3,1])
@@ -438,7 +466,7 @@ def add_data_page():
             st.button('select',
                     on_click=select_label_cb,
                     args=[selected_label] )
-        
+
     selected_text = st.sidebar.text_area(label='Selected Text',
                                          key='SELECTED_TEXT_KEY')
     
@@ -467,27 +495,6 @@ def load_data_set_page():
                         args=[selected_file])
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def review_data_set_page():
-    
-    data_list = []
-    
-    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
-        
-        label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]
-        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
-        
-        data_list.append({'Label' : label,
-                          'Filename' : filename,
-                          'Text' : labelled_text['text']})        
-    
-    df = pd.DataFrame(data_list)
-    
-    edited_df = st.data_editor(df, use_container_width=True)
-
-    st.sidebar.button('Update')
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 def create_data_set_page():
     data_set_name = st.sidebar.text_input('Data Set Name:')
@@ -496,30 +503,35 @@ def create_data_set_page():
                         args=[data_set_name])
     
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def train_page():
+    pass
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def classify_page():
+    pass
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initialize the page
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 st.set_page_config(page_title="Definitive A Corporate Proxy Statement Analysis Tool",
                    layout="wide")
 
-st.sidebar.title('Navigation')
+st.sidebar.title('Navigation')  
 
-if st.sidebar.button('display'):
-    print('\n'*100)
-    print('~'*80)
-    pprint(st.session_state[ACTIVE_DATA_SET_KEY])
-    print('~'*80)
-    pprint(st.session_state[ACTIVTE_PROXY_STATEMENT_KEY])
-    print('~'*80)
-    pprint(st.session_state[ACTIVE_LABEL_KEY])
+st.sidebar.button('display',
+                  on_click=display_button_cb)
 
 user_page_selection = st.sidebar.radio('Pages', 
                                        options=['Home',
                                                 'Create New Data Set',
                                                 'Load Data Set',
                                                 'Add Data',
-                                                'Review',
-                                                'Save'],
+                                                'Save / Review',
+                                                'Train',
+                                                'Classify'],
                                        disabled=(not st.session_state[LOGGED_IN_KEY]))
 
 if user_page_selection == 'Create New Data Set':
@@ -528,10 +540,13 @@ elif user_page_selection == 'Load Data Set':
     load_data_set_page()
 elif user_page_selection == 'Add Data':
     add_data_page()
-elif user_page_selection == 'Review':
-    review_data_set_page()
-elif user_page_selection == 'Save':
-    save_data_set_page()
+elif user_page_selection == 'Save / Review':
+    save_and_review_data_set_page()
+elif user_page_selection == 'Train':
+    train_page()
+elif user_page_selection == 'Classify':
+    classify_page()
+   
 else:
     home_page()
 
