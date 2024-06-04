@@ -31,12 +31,18 @@ LABEL_ID = 'label-id'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PROXY_STATEMENTS_PATH = '.proxy-statements'
 USER_DATA_PATH = '.user-data'
+PRIVATE_DATA_SET_PATH = 'data-sets'
+PRIVATE_CLASSIFIER_PATH = 'classifier'
+
 PUBLIC_DATA_PATH = '.public-data'
+PUBLIC_CLASSIFIER_PATH = os.path.join(PUBLIC_DATA_PATH,
+                                     'classifier')
+PUBLIC_DATA_SET_PATH = os.path.join(PUBLIC_DATA_PATH,
+                                    'data-set')
+
 TMP_USER_DATA_PATH = 'tmp'
-SESSION_DIR_PATH = 'session'
 HIGHLIGHTED_PDF = 'highlighed_'
 JSON_EXT = '.json'
-PRIVATE_DATA_SET_PATH = 'data-sets'
 
 LOGGED_IN_KEY = 'LOGGED_IN_KEY'
 USER_CRED_KEY = 'USER_CRED_KEY'
@@ -49,6 +55,7 @@ TRAIN_FIGURE_KEY = 'TRAIN_FIGURE_KEY'
 ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'
 ACTIVTE_PROXY_STATEMENT_KEY = 'PDF_ORIGINAL_FILE_PATH_KEY'
 ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
+ACTIVE_CLASSIFIER_KEY = 'ACTIVE_CLASSIFIER_KEY'
 
 if LOGGED_IN_KEY not in st.session_state:
     st.session_state[LOGGED_IN_KEY] = False
@@ -85,7 +92,10 @@ if TRAIN_TEST_RESULTS_KEY  not in st.session_state:
 
 if TRAIN_FIGURE_KEY not in st.session_state:
     st.session_state[TRAIN_FIGURE_KEY] = None
-    
+
+if  ACTIVE_CLASSIFIER_KEY not in st.session_state:
+    st.session_state[ACTIVE_CLASSIFIER_KEY] = None
+
 # if  not in st.session_state:
 #     st.session_state[] =
 
@@ -242,6 +252,41 @@ def apply_previous_highlights() -> None:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def get_data_set_path(data_set_file_name : str):
+    data_set_file_path = os.path.join(  USER_DATA_PATH,
+                                        st.session_state[USER_CRED_KEY],
+                                        PRIVATE_DATA_SET_PATH,
+                                        data_set_file_name)
+    
+    if not os.path.exists(data_set_file_path):
+        data_set_file_path = os.path.join(PUBLIC_DATA_PATH, data_set_file_name)
+        
+    return data_set_file_path
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def convert_2_csv(data_set_file_name : str) -> str:
+    
+    data_set_file_path = get_data_set_path(data_set_file_name)
+    data_json_dict = json.load(open(data_set_file_path,'r',encoding='utf-8'))
+    
+    tmp_file_path = os.path.join(USER_DATA_PATH, 
+                                 st.session_state[USER_CRED_KEY],
+                                 TMP_USER_DATA_PATH,
+                                 '.tmp_data_file.csv')
+    
+    with open(tmp_file_path,'w+') as output_file:
+    
+        labels_dict = data_json_dict['labels']
+        for datum in data_json_dict['labelled-text']:
+            text = datum['text']
+            label_name = next(label['name'] for label in labels_dict if label["label-id"] == datum['label-id'])
+            output_file.write(f'{label_name},\"{text}\"\n')
+          
+    return tmp_file_path
+ 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 def get_file_from_id(file_id : int) -> dict:
         
     for file_dict in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
@@ -253,6 +298,9 @@ def get_file_from_id(file_id : int) -> dict:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def save_classifier_cb(classifier_name : str) -> None:
+        pass
 
 def load_file_cb(file_name : str):
     
@@ -389,6 +437,37 @@ def display_button_cb() -> None:
     pprint(st.session_state[ACTIVE_LABEL_KEY])
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def train_classifier_cb(classifier_name : str,
+                        user_selected_model : str,
+                        selected_data_set_file : str,
+                        train_test_fraction : float) -> None:
+    
+    fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
+                                            path_to_pretrained_llm=user_selected_model,
+                                            num_corrections=10)
+    
+    c = SentenceClassifier(name = classifier_name,
+                           pretrained_transformer_path=fine_tuned_model_path,
+                           verbose=True)
+
+    c.set_train_data_path(convert_2_csv(selected_data_set_file))
+
+    c.initialize()
+    
+    c.train_classifier()
+    
+    st.session_state[TRAIN_FIGURE_KEY] = c.generate_interactive_plot()
+   
+    st.session_state[TRAIN_TEST_RESULTS_KEY]  = c.test_classifier(  test_data_path = 'test.csv',
+                                                                    test_label =  'COMP_CON',
+                                                                    verbose = False)  
+    
+    st.session_state[ACTIVE_CLASSIFIER_KEY] = c
+    
+    st.info('Training Complete')
+  
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Page Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -509,65 +588,7 @@ def create_data_set_page():
                         args=[data_set_name])
     
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def get_data_set_path(data_set_file_name : str):
-    data_set_file_path = os.path.join(  USER_DATA_PATH,
-                                        st.session_state[USER_CRED_KEY],
-                                        PRIVATE_DATA_SET_PATH,
-                                        data_set_file_name)
-    
-    if not os.path.exists(data_set_file_path):
-        data_set_file_path = os.path.join(PUBLIC_DATA_PATH, data_set_file_name)
-        
-    return data_set_file_path
-
-def convert_2_csv(data_set_file_name : str) -> str:
-    
-    data_set_file_path = get_data_set_path(data_set_file_name)
-    data_json_dict = json.load(open(data_set_file_path,'r',encoding='utf-8'))
-    
-    tmp_file_path = os.path.join(USER_DATA_PATH, 
-                                 st.session_state[USER_CRED_KEY],
-                                 TMP_USER_DATA_PATH,
-                                 '.tmp_data_file.csv')
-    
-    with open(tmp_file_path,'w+') as output_file:
-    
-        labels_dict = data_json_dict['labels']
-        for datum in data_json_dict['labelled-text']:
-            text = datum['text']
-            label_name = next(label['name'] for label in labels_dict if label["label-id"] == datum['label-id'])
-            output_file.write(f'{label_name},\"{text}\"\n')
-          
-    return tmp_file_path
-
-def train_classifier_cb(classifier_name : str,
-                        user_selected_model : str,
-                        selected_data_set_file : str,
-                        train_test_fraction : float) -> None:
-    
-    fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
-                                            path_to_pretrained_llm=user_selected_model,
-                                            num_corrections=10)
-    
-    c = SentenceClassifier(name = classifier_name,
-                           pretrained_transformer_path=fine_tuned_model_path,
-                           verbose=True)
-
-    c.set_train_data_path(convert_2_csv(selected_data_set_file))
-
-    c.initialize()
-    
-    c.train_classifier()
-    
-    st.session_state[TRAIN_FIGURE_KEY] = c.generate_interactive_plot()
-   
-    st.session_state[TRAIN_TEST_RESULTS_KEY]  = c.test_classifier(  test_data_path = 'test.csv',
-                                                                    test_label =  'COMP_CON',
-                                                                    verbose = False)  
-    
-    st.info('Training Complete')
-    
+ 
 def train_page():
     
     pretrain_model_options = ['all-MiniLM-L6-v2',
@@ -596,6 +617,11 @@ def train_page():
                             train_test_fraction],
                       disabled=((classifier_name == '') or (selected_file == None)))
     
+    st.sidebar.button(  'Save',
+                        on_click=save_classifier_cb,
+                        args=[classifier_name],
+                        disabled = (not st.session_state[ACTIVE_CLASSIFIER_KEY]))
+    
     col_fig, col_table = st.columns([1,1])
         
     if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:
@@ -606,8 +632,22 @@ def train_page():
  
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def get_classifiers() -> list:
+    
+    user_classifier_paths = os.path.join(   USER_DATA_PATH,
+                                            st.session_state[USER_CRED_KEY],
+                                            PRIVATE_CLASSIFIER_PATH)
+    
+    user_classifiers = [os.path.basename(x) for x in glob.glob(user_classifier_paths+'/*')]
+    
+    public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*.json')]
+       
+    return user_classifiers + public_classsifiers
+    
 def classify_page():
-    pass
+    
+    selected_classifier = st.sidebar.selectbox('Select Classifier', 
+                                                options=get_classifiers())     
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initialize the page
