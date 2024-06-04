@@ -1,0 +1,5 @@
+*.json
+*.csv
+__pycache__/
+fine-tuned-model/
+.user-data/*/tmp/

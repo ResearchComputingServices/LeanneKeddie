@@ -3,9 +3,8 @@ import base64
 import shutil
 import json
 
-import streamlit.components.v1 as components
+import plotly.io as pio
 import streamlit as st
-
 import pandas as pd
 import glob
 from pprint import pprint
@@ -13,8 +12,6 @@ from pprint import pprint
 from PDFHighlighter import PDFHighlighter
 from SentenceClassifier.Classifier import SentenceClassifier
 from SentenceClassifier.FineTuner import fine_tune_llm, generate_interactive_plot
-
-# from ExDocGen.ExtractedDocumentGenerator import ExtractedDocumentGenerator
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Dictionary keys
@@ -299,9 +296,51 @@ def get_file_from_id(file_id : int) -> dict:
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def save_classifier_cb(classifier_name : str) -> None:
-        pass
 
+def get_classifiers() -> list:
+    
+    user_classifier_paths = PUBLIC_CLASSIFIER_PATH
+    
+    user_classifiers = [os.path.basename(x) for x in glob.glob(user_classifier_paths+'/*')]
+    
+    public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*.json')]
+       
+    return user_classifiers + public_classsifiers
+
+def load_classifier(selected_classifier : str) -> None:
+    
+    classifier_path = os.path.join(PUBLIC_CLASSIFIER_PATH,
+                                   selected_classifier)    
+    
+    classifier_loaded = SentenceClassifier()   
+    classifier_loaded.load(input_path=classifier_path)
+    
+    st.session_state[ACTIVE_CLASSIFIER_KEY] = classifier_loaded
+    
+    training_figure_path = os.path.join(classifier_path,'fig.json')
+    
+    with open(training_figure_path, 'r') as f:
+        st.session_state[TRAIN_FIGURE_KEY] = pio.from_json(f.read())
+    
+    
+
+def save_classifier_cb(classifier_name : str) -> None:
+    # if the classisifer exsits
+    if st.session_state[ACTIVE_CLASSIFIER_KEY]:
+        
+        output_file_path = os.path.join(PUBLIC_CLASSIFIER_PATH, 
+                                        classifier_name)
+        
+        st.session_state[ACTIVE_CLASSIFIER_KEY].save(output_path=output_file_path)
+        
+        output_file_path = os.path.join(PUBLIC_CLASSIFIER_PATH, 
+                                        classifier_name)
+        
+        
+        st.session_state[TRAIN_FIGURE_KEY].write_json(output_file_path+'/fig.json')
+        st.session_state[TRAIN_FIGURE_KEY].write_html(output_file_path+"/fig-file.html")
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
 def load_file_cb(file_name : str):
     
     data_set_file_path = os.path.join(  USER_DATA_PATH,
@@ -443,9 +482,12 @@ def train_classifier_cb(classifier_name : str,
                         selected_data_set_file : str,
                         train_test_fraction : float) -> None:
     
+    # remember to load the data set file into the sessoin state
+    load_file_cb(selected_data_set_file)
+    
     fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
                                             path_to_pretrained_llm=user_selected_model,
-                                            num_corrections=10)
+                                            num_corrections=1)
     
     c = SentenceClassifier(name = classifier_name,
                            pretrained_transformer_path=fine_tuned_model_path,
@@ -632,22 +674,22 @@ def train_page():
  
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_classifiers() -> list:
-    
-    user_classifier_paths = os.path.join(   USER_DATA_PATH,
-                                            st.session_state[USER_CRED_KEY],
-                                            PRIVATE_CLASSIFIER_PATH)
-    
-    user_classifiers = [os.path.basename(x) for x in glob.glob(user_classifier_paths+'/*')]
-    
-    public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*.json')]
-       
-    return user_classifiers + public_classsifiers
-    
 def classify_page():
     
     selected_classifier = st.sidebar.selectbox('Select Classifier', 
                                                 options=get_classifiers())     
+
+    st.sidebar.button('Load',
+                      on_click=load_classifier,
+                      args=[selected_classifier])
+    
+    col_fig, col_table = st.columns([1,1])
+        
+    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:
+        col_table.table(st.session_state[TRAIN_TEST_RESULTS_KEY])
+    
+    if st.session_state[TRAIN_FIGURE_KEY] != None:
+        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initialize the page
