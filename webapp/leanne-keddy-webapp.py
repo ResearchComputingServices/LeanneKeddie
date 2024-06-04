@@ -12,6 +12,7 @@ from pprint import pprint
 
 from PDFHighlighter import PDFHighlighter
 from SentenceClassifier.Classifier import SentenceClassifier
+from SentenceClassifier.FineTuner import fine_tune_llm, generate_interactive_plot
 
 # from ExDocGen.ExtractedDocumentGenerator import ExtractedDocumentGenerator
 
@@ -43,6 +44,8 @@ PDF_SELECTED_KEY = 'PDF_SELECTED_KEY'
 PDF_HIGHLIGHTED_FILE_PATH_KEY = 'PDF_HIGHLIGHTED_FILE_PATH_KEY'
 PDF_HIGHLIGHTER_KEY = 'PDF_HIGHLIGHTER_KEY'
 LABELLED_SENTENCES_KEY = 'LABELLED_SENTENCES_KEY'
+TRAIN_TEST_RESULTS_KEY = 'TRAIN_TEST_RESULTS_KEY'
+TRAIN_FIGURE_KEY = 'TRAIN_FIGURE_KEY'
 ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'
 ACTIVTE_PROXY_STATEMENT_KEY = 'PDF_ORIGINAL_FILE_PATH_KEY'
 ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
@@ -76,18 +79,15 @@ if ACTIVE_LABEL_KEY not in st.session_state:
     st.session_state[ACTIVE_LABEL_KEY] = {LABEL_NAME : '',
                                           LABEL_COLOUR : (0,0,0),
                                           LABEL_ID : -1}
+    
+if TRAIN_TEST_RESULTS_KEY  not in st.session_state:
+    st.session_state[TRAIN_TEST_RESULTS_KEY] = None
 
+if TRAIN_FIGURE_KEY not in st.session_state:
+    st.session_state[TRAIN_FIGURE_KEY] = None
+    
 # if  not in st.session_state:
 #     st.session_state[] =
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def session_to_console() -> None:
-    print(ACTIVTE_PROXY_STATEMENT_KEY,':')
-    pprint(st.session_state[ACTIVTE_PROXY_STATEMENT_KEY])
-    print(LABELLED_SENTENCES_KEY,': ')
-    pprint(st.session_state[LABELLED_SENTENCES_KEY])
-    print('~'*80)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Helper Functions
@@ -249,6 +249,7 @@ def get_file_from_id(file_id : int) -> dict:
             return file_dict
 
     return {PROXY_STATEMENT_FILENAME : 'Unknown', PROXY_STATEMENT_FILE_ID : -1}
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -392,29 +393,34 @@ def display_button_cb() -> None:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def save_and_review_data_set_page():
-    name_col, type_cal = st.sidebar.columns([2,1])
     
-    file_name = name_col.text_input('Filename')
-    save_type = type_cal.radio( 'Save Type',
-                                options = ['private', 'public'])
-    st.sidebar.button(  'Save',
-                        on_click=save_session_cb,
-                        args=[file_name, save_type])
+    if st.session_state[ACTIVE_DATA_SET_KEY] == None:
+        st.error('No active Data Set')
+    else:
     
-    data_list = []
-    
-    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+        name_col, type_cal = st.sidebar.columns([2,1])
         
-        label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]
-        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+        file_name = name_col.text_input('Filename')
+        save_type = type_cal.radio( 'Save Type',
+                                    options = ['private', 'public'])
+        st.sidebar.button(  'Save',
+                            on_click=save_session_cb,
+                            args=[file_name, save_type])
         
-        data_list.append({'Label' : label,
-                          'Filename' : filename,
-                          'Text' : labelled_text['text']})        
-    
-    df = pd.DataFrame(data_list)
-    
-    edited_df = st.data_editor(df, use_container_width=True)
+        data_list = []
+        
+        for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+            
+            label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]
+            filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+            
+            data_list.append({'Label' : label,
+                            'Filename' : filename,
+                            'Text' : labelled_text['text']})        
+        
+        df = pd.DataFrame(data_list)
+        
+        edited_df = st.data_editor(df, use_container_width=True)
         
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -487,7 +493,7 @@ def add_data_page():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def load_data_set_page():
-    selected_file = st.sidebar.selectbox(   label='Available Proxy Statements',
+    selected_file = st.sidebar.selectbox(   label='Data Set Files',
                                             options=get_data_set_files(),
                                             index=None)    
     st.sidebar.button(  'Load',
@@ -504,9 +510,100 @@ def create_data_set_page():
     
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def train_page():
-    pass
+def get_data_set_path(data_set_file_name : str):
+    data_set_file_path = os.path.join(  USER_DATA_PATH,
+                                        st.session_state[USER_CRED_KEY],
+                                        PRIVATE_DATA_SET_PATH,
+                                        data_set_file_name)
+    
+    if not os.path.exists(data_set_file_path):
+        data_set_file_path = os.path.join(PUBLIC_DATA_PATH, data_set_file_name)
+        
+    return data_set_file_path
 
+def convert_2_csv(data_set_file_name : str) -> str:
+    
+    data_set_file_path = get_data_set_path(data_set_file_name)
+    data_json_dict = json.load(open(data_set_file_path,'r',encoding='utf-8'))
+    
+    tmp_file_path = os.path.join(USER_DATA_PATH, 
+                                 st.session_state[USER_CRED_KEY],
+                                 TMP_USER_DATA_PATH,
+                                 '.tmp_data_file.csv')
+    
+    with open(tmp_file_path,'w+') as output_file:
+    
+        labels_dict = data_json_dict['labels']
+        for datum in data_json_dict['labelled-text']:
+            text = datum['text']
+            label_name = next(label['name'] for label in labels_dict if label["label-id"] == datum['label-id'])
+            output_file.write(f'{label_name},\"{text}\"\n')
+          
+    return tmp_file_path
+
+def train_classifier_cb(classifier_name : str,
+                        user_selected_model : str,
+                        selected_data_set_file : str,
+                        train_test_fraction : float) -> None:
+    
+    fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
+                                            path_to_pretrained_llm=user_selected_model,
+                                            num_corrections=10)
+    
+    c = SentenceClassifier(name = classifier_name,
+                           pretrained_transformer_path=fine_tuned_model_path,
+                           verbose=True)
+
+    c.set_train_data_path(convert_2_csv(selected_data_set_file))
+
+    c.initialize()
+    
+    c.train_classifier()
+    
+    st.session_state[TRAIN_FIGURE_KEY] = c.generate_interactive_plot()
+   
+    st.session_state[TRAIN_TEST_RESULTS_KEY]  = c.test_classifier(  test_data_path = 'test.csv',
+                                                                    test_label =  'COMP_CON',
+                                                                    verbose = False)  
+    
+    st.info('Training Complete')
+    
+def train_page():
+    
+    pretrain_model_options = ['all-MiniLM-L6-v2',
+                              'nli-distilroberta-base-v2',
+                              'paraphrase-MiniLM-L6-v2']
+    
+    user_selected_model = st.sidebar.radio('Select Pre-Trained Model', 
+                                            options=pretrain_model_options )
+
+    selected_file = st.sidebar.selectbox(   label='Data Set Files',
+                                            options=get_data_set_files(),
+                                            index=None)
+    
+    train_test_fraction = st.sidebar.slider(label='Select Training/Testing Fraction',
+                                            min_value=0.6,
+                                            max_value=1.0,
+                                            value = 0.7)
+    
+    classifier_name = st.sidebar.text_input('Classifier Name')
+    
+    st.sidebar.button('Train',
+                      on_click=train_classifier_cb,
+                      args=[classifier_name,
+                            user_selected_model,
+                            selected_file,
+                            train_test_fraction],
+                      disabled=((classifier_name == '') or (selected_file == None)))
+    
+    col_fig, col_table = st.columns([1,1])
+        
+    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:
+        col_table.table(st.session_state[TRAIN_TEST_RESULTS_KEY])
+    
+    if st.session_state[TRAIN_FIGURE_KEY] != None:
+        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])
+ 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def classify_page():
@@ -546,7 +643,6 @@ elif user_page_selection == 'Train':
     train_page()
 elif user_page_selection == 'Classify':
     classify_page()
-   
 else:
     home_page()
 

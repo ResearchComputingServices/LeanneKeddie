@@ -21,8 +21,6 @@ PRETRAIN_MODEL = 'all-MiniLM-L6-v2'
 
 CONF_THRESHOLD = 0.9
 
-OUTPUT_JSON_FILE_PATH = 'correction_samples.json'
-
 # UMAP
 N_COMPONENTS = 2
 METRIC_TYPE = 'cosine'
@@ -30,7 +28,8 @@ MIN_DIST = 0.
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def generate_correction_samples(training_data_file_path):
+def outlier_detector(training_data_file_path,
+                     output_json_file_path):
     
     logreg_classifier = LogisticRegression(verbose=True)
     
@@ -46,9 +45,6 @@ def generate_correction_samples(training_data_file_path):
     raw_umap_transformer.fit(X=full_data_set.get_embeddings())
     
     full_data_set.perform_reduction(raw_umap_transformer)
-
-    # fig_raw_transformer = generate_interactive_plot(full_data_set) 
-    # fig_raw_transformer.show()
     
     samples = full_data_set.get_reduced_embeddings()
     labels = full_data_set.get_label_index_list()
@@ -56,7 +52,8 @@ def generate_correction_samples(training_data_file_path):
     logreg_classifier.fit(  X=samples,
                             y=labels)
     
-    fine_tuning_corrections = {'samples' : []}
+    results_json = {'outliers' : [],
+                    'inliers' : {}}
     
     # find all the outliers    
     for datum in full_data_set.data_list:
@@ -71,15 +68,21 @@ def generate_correction_samples(training_data_file_path):
         prediction_conf = probs[0][predicted_class_index][0]
 
         if (predicted_class_label != datum.label) or (predicted_class_label == datum.label and prediction_conf < CONF_THRESHOLD):
-            fine_tuning_corrections['samples'].append( {'sentence' : datum.sentence,
-                                                        'actual' : datum.label,
-                                                        'pred' : predicted_class_label,
-                                                        'conf' : prediction_conf})
+            results_json['outliers'].append({   'sentence' : datum.sentence,
+                                                'actual' : datum.label,
+                                                'pred' : predicted_class_label,
+                                                'conf' : prediction_conf})
+        else:
+            if datum.label in results_json['inliers'].keys():
+                results_json['inliers'][datum.label].append(datum.sentence)
+            else:
+                results_json['inliers'][datum.label] = [datum.sentence]
+
     
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # save tp json file  
     #json_data = json.dumps(fine_tuning_corrections)
-    with open(OUTPUT_JSON_FILE_PATH, "w") as outfile: 
-        json.dump(fine_tuning_corrections, outfile)
+    with open(output_json_file_path, "w") as outfile: 
+        json.dump(results_json, outfile)
         
-    return fine_tuning_corrections
+    return results_json
