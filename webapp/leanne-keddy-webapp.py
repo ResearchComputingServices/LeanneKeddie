@@ -26,7 +26,10 @@ LABEL_ID = 'label-id'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Global Constants
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PROXY_STATEMENTS_PATH = '.proxy-statements'
+PROXY_STATEMENTS_BASE_PATH = '.proxy-statements'
+PROXY_STATEMENT_PDFS_PATH = os.path.join(PROXY_STATEMENTS_BASE_PATH, 'pdfs')
+PROXY_STATEMENT_JSONS_PATH = os.path.join(PROXY_STATEMENTS_BASE_PATH, 'json')
+
 USER_DATA_PATH = '.user-data'
 PRIVATE_DATA_SET_PATH = 'data-sets'
 PRIVATE_CLASSIFIER_PATH = 'classifier'
@@ -106,14 +109,14 @@ def check_credentials(user_creds : str) -> bool:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_proxy_statements() -> list:
-    return [os.path.basename(x) for x in glob.glob(PROXY_STATEMENTS_PATH+'/*.pdf')]
+def get_proxy_statement_pdfs() -> list:
+    return [os.path.basename(x) for x in glob.glob(PROXY_STATEMENT_PDFS_PATH+'/*.pdf')]
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def create_tmp_file(pdf_file_name : str):
     # build src and dst paths
-    src_path = os.path.join(PROXY_STATEMENTS_PATH, pdf_file_name)
+    src_path = os.path.join(PROXY_STATEMENT_PDFS_PATH, pdf_file_name)
     
     dst_path = os.path.join(USER_DATA_PATH, st.session_state[USER_CRED_KEY])
     dst_path = os.path.join(dst_path, TMP_USER_DATA_PATH)
@@ -210,6 +213,7 @@ def get_data_set_files():
     public_data_sets = [os.path.basename(x) for x in glob.glob(PUBLIC_DATA_PATH+'/*.json')]
        
     return user_data_sets + public_data_sets
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
 def get_label_from_id(label_id : int) -> dict:
@@ -293,19 +297,27 @@ def get_file_from_id(file_id : int) -> dict:
     return {PROXY_STATEMENT_FILENAME : 'Unknown', PROXY_STATEMENT_FILE_ID : -1}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Call Back Functions
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 def get_classifiers() -> list:
     
-    user_classifier_paths = PUBLIC_CLASSIFIER_PATH
+    user_classifier_paths = os.path.join(   USER_DATA_PATH,
+                                            st.session_state[USER_CRED_KEY],
+                                            PRIVATE_CLASSIFIER_PATH)
     
     user_classifiers = [os.path.basename(x) for x in glob.glob(user_classifier_paths+'/*')]
     
     public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*.json')]
        
     return user_classifiers + public_classsifiers
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_proxy_statement_json_files() -> list:
+    return glob.glob(PROXY_STATEMENT_JSONS_PATH+'/*.json')
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Call Back Functions
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def load_classifier(selected_classifier : str) -> None:
     
@@ -322,7 +334,7 @@ def load_classifier(selected_classifier : str) -> None:
     with open(training_figure_path, 'r') as f:
         st.session_state[TRAIN_FIGURE_KEY] = pio.from_json(f.read())
     
-    
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
 
 def save_classifier_cb(classifier_name : str) -> None:
     # if the classisifer exsits
@@ -339,6 +351,7 @@ def save_classifier_cb(classifier_name : str) -> None:
         
         st.session_state[TRAIN_FIGURE_KEY].write_json(output_file_path+'/fig.json')
         st.session_state[TRAIN_FIGURE_KEY].write_html(output_file_path+"/fig-file.html")
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
 def load_file_cb(file_name : str):
@@ -487,7 +500,7 @@ def train_classifier_cb(classifier_name : str,
     
     fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
                                             path_to_pretrained_llm=user_selected_model,
-                                            num_corrections=1)
+                                            num_corrections=10)
     
     c = SentenceClassifier(name = classifier_name,
                            pretrained_transformer_path=fine_tuned_model_path,
@@ -571,7 +584,7 @@ def add_data_page():
     
     with st.sidebar.popover(f'Select Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}'):
         selected_file = st.selectbox(   label='Available Proxy Statements',
-                                        options=get_proxy_statements(),
+                                        options=get_proxy_statement_pdfs(),
                                         index=None)    
         st.button(  'Select',
                     on_click=select_file_cb,
@@ -674,6 +687,41 @@ def train_page():
  
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def analyze_json_file(json_file_path : str,
+                      section_types : list) -> dict:
+    
+    # get the load classifier
+    c = st.session_state[ACTIVE_CLASSIFIER_KEY]
+    
+    # results of classification will be stored in this dict
+    results_dict = {}
+    
+    json_dict = json.load(open(json_file_path))
+    
+    results_dict['filename'] = os.path.basename(json_dict['file_path'])
+    results_dict['results'] = []
+    
+    for page in json_dict['document_pages']:
+        for text_block in page['document_text_blocks']:
+            for sentence in text_block['sentences']:
+                label, conf = c.classify(sentence)
+                results_dict['results'].append({'sentence' : sentence,
+                                                'label' : label,
+                                                'conf' : conf})
+    return results_dict
+
+def analyze_proxy_statements_cb(section_types : list) -> None:
+    proxy_statement_jsons = get_proxy_statement_json_files()
+    
+    full_results = []
+    
+    for file_path in proxy_statement_jsons:
+        full_results.append(analyze_json_file(file_path,section_types))
+        break
+    
+    pprint(full_results[0])
+    input()
+    
 def classify_page():
     
     selected_classifier = st.sidebar.selectbox('Select Classifier', 
@@ -682,6 +730,23 @@ def classify_page():
     st.sidebar.button('Load',
                       on_click=load_classifier,
                       args=[selected_classifier])
+    
+    section_types = st.sidebar.multiselect( 'Section Types',
+                                            options=[   'Caption', 
+                                                        'Footnote', 
+                                                        # 'Formula', 
+                                                        'List-Item', 
+                                                        'Page-footer',
+                                                        'Page-header', 
+                                                        # 'Picture', 
+                                                        'Section-header', 
+                                                        # 'Table', 
+                                                        'Text',
+                                                        'Title'])
+    
+    st.sidebar.button('Analyze',
+                      on_click=analyze_proxy_statements_cb,
+                      args=[section_types])
     
     col_fig, col_table = st.columns([1,1])
         
