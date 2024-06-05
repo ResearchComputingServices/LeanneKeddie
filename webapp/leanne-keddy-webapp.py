@@ -2,6 +2,7 @@ import os
 import base64
 import shutil
 import json
+import time
 
 import plotly.io as pio
 import streamlit as st
@@ -306,8 +307,8 @@ def get_classifiers() -> list:
     
     user_classifiers = [os.path.basename(x) for x in glob.glob(user_classifier_paths+'/*')]
     
-    public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*.json')]
-       
+    public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*')]
+           
     return user_classifiers + public_classsifiers
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -316,11 +317,41 @@ def get_proxy_statement_json_files() -> list:
     return glob.glob(PROXY_STATEMENT_JSONS_PATH+'/*.json')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def analyze_json_file(json_file_path : str,
+                      section_types : list) -> dict:
+    
+    # get the load classifier
+    c = st.session_state[ACTIVE_CLASSIFIER_KEY]
+    
+    # results of classification will be stored in this dict
+    results_dict = {}
+    
+    json_dict = json.load(open(json_file_path))
+    
+    results_dict['filename'] = os.path.basename(json_dict['file_path'])
+    results_dict['results'] = []
+    
+    # extract all the text from the given json that needs to be analyzed
+    sentence_list = []
+    for page in json_dict['document_pages']:
+        for text_block in page['document_text_blocks']:
+            if text_block['label'] in section_types:
+                for sentence in text_block['sentences']:
+                    sentence_list.append(sentence['text'])
+    
+    # run the analysis
+    if len(sentence_list) > 0:
+        results_dict['results'] = c.classify_list(sentence_list)
+        
+    return results_dict
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def load_classifier(selected_classifier : str) -> None:
-    
+        
     classifier_path = os.path.join(PUBLIC_CLASSIFIER_PATH,
                                    selected_classifier)    
     
@@ -330,9 +361,12 @@ def load_classifier(selected_classifier : str) -> None:
     st.session_state[ACTIVE_CLASSIFIER_KEY] = classifier_loaded
     
     training_figure_path = os.path.join(classifier_path,'fig.json')
-    
     with open(training_figure_path, 'r') as f:
         st.session_state[TRAIN_FIGURE_KEY] = pio.from_json(f.read())
+    
+    training_results_path = os.path.join(classifier_path,'train_results.json')
+    with open(training_results_path, 'r') as f:
+        st.session_state[TRAIN_TEST_RESULTS_KEY] = json.load(f)
     
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
 
@@ -350,8 +384,9 @@ def save_classifier_cb(classifier_name : str) -> None:
         
         
         st.session_state[TRAIN_FIGURE_KEY].write_json(output_file_path+'/fig.json')
-        st.session_state[TRAIN_FIGURE_KEY].write_html(output_file_path+"/fig-file.html")
-
+        
+        with open(output_file_path+'/train_results.json', 'w+') as fp:
+            json.dump(st.session_state[TRAIN_TEST_RESULTS_KEY] , fp)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
 def load_file_cb(file_name : str):
@@ -500,7 +535,7 @@ def train_classifier_cb(classifier_name : str,
     
     fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
                                             path_to_pretrained_llm=user_selected_model,
-                                            num_corrections=10)
+                                            num_corrections=5)
     
     c = SentenceClassifier(name = classifier_name,
                            pretrained_transformer_path=fine_tuned_model_path,
@@ -521,7 +556,18 @@ def train_classifier_cb(classifier_name : str,
     st.session_state[ACTIVE_CLASSIFIER_KEY] = c
     
     st.info('Training Complete')
-  
+    
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def analyze_proxy_statements_cb(section_types : list) -> None:
+    proxy_statement_jsons = get_proxy_statement_json_files()
+    
+    full_results = []
+    
+    for file_path in proxy_statement_jsons:
+        results_dict = analyze_json_file(file_path,section_types)        
+        full_results.append(results_dict)
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Page Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -685,51 +731,18 @@ def train_page():
     if st.session_state[TRAIN_FIGURE_KEY] != None:
         col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])
  
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def analyze_json_file(json_file_path : str,
-                      section_types : list) -> dict:
-    
-    # get the load classifier
-    c = st.session_state[ACTIVE_CLASSIFIER_KEY]
-    
-    # results of classification will be stored in this dict
-    results_dict = {}
-    
-    json_dict = json.load(open(json_file_path))
-    
-    results_dict['filename'] = os.path.basename(json_dict['file_path'])
-    results_dict['results'] = []
-    
-    for page in json_dict['document_pages']:
-        for text_block in page['document_text_blocks']:
-            for sentence in text_block['sentences']:
-                label, conf = c.classify(sentence)
-                results_dict['results'].append({'sentence' : sentence,
-                                                'label' : label,
-                                                'conf' : conf})
-    return results_dict
-
-def analyze_proxy_statements_cb(section_types : list) -> None:
-    proxy_statement_jsons = get_proxy_statement_json_files()
-    
-    full_results = []
-    
-    for file_path in proxy_statement_jsons:
-        full_results.append(analyze_json_file(file_path,section_types))
-        break
-    
-    pprint(full_results[0])
-    input()
-    
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      
+        
 def classify_page():
     
     selected_classifier = st.sidebar.selectbox('Select Classifier', 
-                                                options=get_classifiers())     
+                                                options=get_classifiers(),
+                                                index=None)     
 
     st.sidebar.button('Load',
                       on_click=load_classifier,
-                      args=[selected_classifier])
+                      args=[selected_classifier],
+                      disabled=(not selected_classifier))
     
     section_types = st.sidebar.multiselect( 'Section Types',
                                             options=[   'Caption', 
@@ -746,7 +759,8 @@ def classify_page():
     
     st.sidebar.button('Analyze',
                       on_click=analyze_proxy_statements_cb,
-                      args=[section_types])
+                      args=[section_types],
+                      disabled=(not st.session_state[ACTIVE_CLASSIFIER_KEY] or len(section_types) ==  0))
     
     col_fig, col_table = st.columns([1,1])
         
@@ -764,6 +778,8 @@ st.set_page_config(page_title="Definitive A Corporate Proxy Statement Analysis T
                    layout="wide")
 
 st.sidebar.title('Navigation')  
+
+st.sidebar.markdown(f'user creds: {st.session_state[USER_CRED_KEY]}')
 
 st.sidebar.button('display',
                   on_click=display_button_cb)
