@@ -1,7 +1,9 @@
+
+
 import streamlit as st
+import plotly.io as pio
 
 from utils import *
-
 from SentenceClassifier.Classifier import SentenceClassifier
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
@@ -43,8 +45,10 @@ def analyze_proxy_statements_cb(section_types : list) -> None:
         full_results.append(results_dict)
         
     st.session_state[ACTIVE_RESULTS_KEY] = full_results
-    
-    st.info('Classification Complete.')
+        
+    if len(full_results) == len(proxy_statement_jsons):
+        st.info(f'Classification Complete.')
+        analysis_progress_bar.progress(1.,text=file_path)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 

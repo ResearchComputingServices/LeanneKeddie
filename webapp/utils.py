@@ -55,50 +55,56 @@ ACTIVE_CLASSIFIER_KEY = 'ACTIVE_CLASSIFIER_KEY'
 ACTIVE_RESULTS_KEY = 'ACTIVE_RESULTS_KEY'
 RESULTS_CSV_KEY = 'RESULTS_CSV_KEY'
 
-if LOGGED_IN_KEY not in st.session_state:
-    st.session_state[LOGGED_IN_KEY] = False
+def initialize_session_state():
 
-if USER_CRED_KEY not in st.session_state:
-    st.session_state[USER_CRED_KEY] = None
+    if LOGGED_IN_KEY not in st.session_state:
+        st.session_state[LOGGED_IN_KEY] = False
 
-if PDF_SELECTED_KEY not in st.session_state:
-    st.session_state[PDF_SELECTED_KEY] = False
+    if USER_CRED_KEY not in st.session_state:
+        st.session_state[USER_CRED_KEY] = None
 
-if PDF_HIGHLIGHTED_FILE_PATH_KEY not in st.session_state:
-    st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY] = None
-    
-if PDF_HIGHLIGHTER_KEY not in st.session_state:
-    st.session_state[PDF_HIGHLIGHTER_KEY] = None
+    if PDF_SELECTED_KEY not in st.session_state:
+        st.session_state[PDF_SELECTED_KEY] = False
 
-if LABELLED_SENTENCES_KEY not in st.session_state:
-    st.session_state[LABELLED_SENTENCES_KEY] = {}
+    if PDF_HIGHLIGHTED_FILE_PATH_KEY not in st.session_state:
+        st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY] = None
+        
+    if PDF_HIGHLIGHTER_KEY not in st.session_state:
+        st.session_state[PDF_HIGHLIGHTER_KEY] = None
 
-if ACTIVE_DATA_SET_KEY not in st.session_state:
-    st.session_state[ACTIVE_DATA_SET_KEY] = None
+    if LABELLED_SENTENCES_KEY not in st.session_state:
+        st.session_state[LABELLED_SENTENCES_KEY] = {}
 
-if ACTIVTE_PROXY_STATEMENT_KEY not in st.session_state:
-    st.session_state[ACTIVTE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
-                                                     PROXY_STATEMENT_FILE_ID : -1}
+    if ACTIVE_DATA_SET_KEY not in st.session_state:
+        st.session_state[ACTIVE_DATA_SET_KEY] =  {  'name' :           'None',
+                                                    'labels' :          [],
+                                                    'proxy-statements': [],
+                                                    'labelled-text':    [],
+                                                    'initialized':      0}
 
-if ACTIVE_LABEL_KEY not in st.session_state:
-    st.session_state[ACTIVE_LABEL_KEY] = {LABEL_NAME : '',
-                                          LABEL_COLOUR : (0,0,0),
-                                          LABEL_ID : -1}
-    
-if TRAIN_TEST_RESULTS_KEY  not in st.session_state:
-    st.session_state[TRAIN_TEST_RESULTS_KEY] = None
+    if ACTIVTE_PROXY_STATEMENT_KEY not in st.session_state:
+        st.session_state[ACTIVTE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
+                                                        PROXY_STATEMENT_FILE_ID : -1}
 
-if TRAIN_FIGURE_KEY not in st.session_state:
-    st.session_state[TRAIN_FIGURE_KEY] = None
+    if ACTIVE_LABEL_KEY not in st.session_state:
+        st.session_state[ACTIVE_LABEL_KEY] = {LABEL_NAME : '',
+                                            LABEL_COLOUR : (0,0,0),
+                                            LABEL_ID : -1}
+        
+    if TRAIN_TEST_RESULTS_KEY  not in st.session_state:
+        st.session_state[TRAIN_TEST_RESULTS_KEY] = None
 
-if  ACTIVE_CLASSIFIER_KEY not in st.session_state:
-    st.session_state[ACTIVE_CLASSIFIER_KEY] = None
+    if TRAIN_FIGURE_KEY not in st.session_state:
+        st.session_state[TRAIN_FIGURE_KEY] = None
 
-if ACTIVE_RESULTS_KEY not in st.session_state:
-    st.session_state[ACTIVE_RESULTS_KEY] = None
+    if  ACTIVE_CLASSIFIER_KEY not in st.session_state:
+        st.session_state[ACTIVE_CLASSIFIER_KEY] = None
 
-if RESULTS_CSV_KEY not in st.session_state:
-    st.session_state[RESULTS_CSV_KEY] = None
+    if ACTIVE_RESULTS_KEY not in st.session_state:
+        st.session_state[ACTIVE_RESULTS_KEY] = None
+
+    if RESULTS_CSV_KEY not in st.session_state:
+        st.session_state[RESULTS_CSV_KEY] = None
 
 # if  not in st.session_state:
 #     st.session_state[] =

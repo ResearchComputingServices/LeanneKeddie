@@ -17,6 +17,8 @@ from view_results_page import view_results_page
 # initialize the page
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+initialize_session_state()
+
 st.set_page_config(page_title="Definitive A Corporate Proxy Statement Analysis Tool",
                    layout="wide")
 

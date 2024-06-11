@@ -11,7 +11,8 @@ def create_data_set_cb(data_set_name : str) -> None:
     st.session_state[ACTIVE_DATA_SET_KEY] = {   'name' :            data_set_name,
                                                 'labels' :          [],
                                                 'proxy-statements': [],
-                                                'labelled-text':    []}
+                                                'labelled-text':    [],
+                                                'initialized':      1}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
