@@ -2,10 +2,12 @@ import os
 import base64
 import shutil
 import json
-import time
+from distutils.dir_util import copy_tree
+
+import streamlit as st
+import streamlit.components.v1 as components
 
 import plotly.io as pio
-import streamlit as st
 import pandas as pd
 import glob
 from pprint import pprint
@@ -13,6 +15,7 @@ from pprint import pprint
 from PDFHighlighter import PDFHighlighter
 from SentenceClassifier.Classifier import SentenceClassifier
 from SentenceClassifier.FineTuner import fine_tune_llm, generate_interactive_plot
+from SentenceClassifier.DataSet import DataSet
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Dictionary keys
@@ -57,6 +60,8 @@ ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'
 ACTIVTE_PROXY_STATEMENT_KEY = 'PDF_ORIGINAL_FILE_PATH_KEY'
 ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
 ACTIVE_CLASSIFIER_KEY = 'ACTIVE_CLASSIFIER_KEY'
+ACTIVE_RESULTS_KEY = 'ACTIVE_RESULTS_KEY'
+RESULTS_CSV_KEY = 'RESULTS_CSV_KEY'
 
 if LOGGED_IN_KEY not in st.session_state:
     st.session_state[LOGGED_IN_KEY] = False
@@ -97,11 +102,89 @@ if TRAIN_FIGURE_KEY not in st.session_state:
 if  ACTIVE_CLASSIFIER_KEY not in st.session_state:
     st.session_state[ACTIVE_CLASSIFIER_KEY] = None
 
+if ACTIVE_RESULTS_KEY not in st.session_state:
+    st.session_state[ACTIVE_RESULTS_KEY] = None
+
+if RESULTS_CSV_KEY not in st.session_state:
+    st.session_state[RESULTS_CSV_KEY] = None
+
+
 # if  not in st.session_state:
 #     st.session_state[] =
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Helper Functions
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_user_tmp_data_path() -> str:
+    return os.path.join(USER_DATA_PATH, st.session_state[USER_CRED_KEY],TMP_USER_DATA_PATH)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_user_tmp_classifier_path() -> str:
+    return os.path.join(get_user_tmp_data_path(), 'trained-classifier')
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_user_tmp_highlighted_path() -> str:
+    return os.path.join(get_user_tmp_data_path(), 'highlighted')
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_classifier_name():
+    active_classifier_name = 'None'
+    if st.session_state[ACTIVE_CLASSIFIER_KEY]:
+        active_classifier_name = st.session_state[ACTIVE_CLASSIFIER_KEY].name
+    return active_classifier_name
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def convert_2_data_set() -> DataSet:
+    
+    data_set = DataSet()
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
+        data_set.labels[label['name']] = label['label-id']
+    
+    data_list = []
+    
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+            
+            label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]            
+            data_list.append([label,labelled_text['text']])
+    
+    data_set.read_data_list(data_list)
+            
+    return  data_set
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_labels() -> list:
+    labels = []
+    if st.session_state[ACTIVE_CLASSIFIER_KEY]:
+        labels = st.session_state[ACTIVE_CLASSIFIER_KEY].get_labels()
+        
+    return labels
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_labels() -> list:
+
+    list_of_labels = []
+
+    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
+        list_of_labels.append(label['name'])
+               
+    return list_of_labels
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_results(selected_label : str):
+    
+    for result_dict in st.session_state[TRAIN_TEST_RESULTS_KEY]:
+        if result_dict['Label'] == selected_label:
+            return result_dict
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def check_credentials(user_creds : str) -> bool:
@@ -118,10 +201,8 @@ def get_proxy_statement_pdfs() -> list:
 def create_tmp_file(pdf_file_name : str):
     # build src and dst paths
     src_path = os.path.join(PROXY_STATEMENT_PDFS_PATH, pdf_file_name)
-    
-    dst_path = os.path.join(USER_DATA_PATH, st.session_state[USER_CRED_KEY])
-    dst_path = os.path.join(dst_path, TMP_USER_DATA_PATH)
-    dst_path = os.path.join(dst_path,HIGHLIGHTED_PDF+pdf_file_name)
+
+    dst_path = os.path.join(get_user_tmp_highlighted_path(),HIGHLIGHTED_PDF+pdf_file_name)
     
     # copy file to tmp
     shutil.copy(src_path, dst_path)
@@ -137,15 +218,26 @@ def hex_to_rgb(value):
     return colour
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       
+def get_results_csv():
+    
+    result_str = ''
+    
+    if st.session_state[ACTIVE_RESULTS_KEY]:
+        for item in st.session_state[ACTIVE_RESULTS_KEY]:
+            file_name = item['filename']
+            
+            for result in item['results']:
+                conf = result['conf'][0]
+                label = result['label']
+                text = result['text']
+                result_str += f'{file_name},{label},{conf},\"{text}\"\n'
 
-def get_labels() -> list:
+    return result_str.encode("utf-8")
 
-    list_of_labels = []
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        list_of_labels.append(label['name'])
-               
-    return list_of_labels
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -267,28 +359,6 @@ def get_data_set_path(data_set_file_name : str):
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def convert_2_csv(data_set_file_name : str) -> str:
-    
-    data_set_file_path = get_data_set_path(data_set_file_name)
-    data_json_dict = json.load(open(data_set_file_path,'r',encoding='utf-8'))
-    
-    tmp_file_path = os.path.join(USER_DATA_PATH, 
-                                 st.session_state[USER_CRED_KEY],
-                                 TMP_USER_DATA_PATH,
-                                 '.tmp_data_file.csv')
-    
-    with open(tmp_file_path,'w+') as output_file:
-    
-        labels_dict = data_json_dict['labels']
-        for datum in data_json_dict['labelled-text']:
-            text = datum['text']
-            label_name = next(label['name'] for label in labels_dict if label["label-id"] == datum['label-id'])
-            output_file.write(f'{label_name},\"{text}\"\n')
-          
-    return tmp_file_path
- 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 def get_file_from_id(file_id : int) -> dict:
         
     for file_dict in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
@@ -296,6 +366,18 @@ def get_file_from_id(file_id : int) -> dict:
             return file_dict
 
     return {PROXY_STATEMENT_FILENAME : 'Unknown', PROXY_STATEMENT_FILE_ID : -1}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_results_list() -> list:
+    
+    results_list = []
+    
+    if st.session_state[ACTIVE_RESULTS_KEY]:
+        for item in st.session_state[ACTIVE_RESULTS_KEY]:
+            results_list.append(item['filename'])
+    
+    return results_list
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -333,19 +415,28 @@ def analyze_json_file(json_file_path : str,
     results_dict['results'] = []
     
     # extract all the text from the given json that needs to be analyzed
-    sentence_list = []
+    data_list = []
     for page in json_dict['document_pages']:
         for text_block in page['document_text_blocks']:
             if text_block['label'] in section_types:
                 for sentence in text_block['sentences']:
-                    sentence_list.append(sentence['text'])
+                    data_list.append(['UNKNOWN',sentence['text']])
     
     # run the analysis
-    if len(sentence_list) > 0:
-        results_dict['results'] = c.classify_list(sentence_list)
+    if len(data_list) > 0:
+        results_dict['results'] = c.classify_list(data_list)
         
     return results_dict
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_result(selected_proxy_statement_result : str) -> dict:
+        
+    for item in st.session_state[ACTIVE_RESULTS_KEY]:
+
+        if item['filename'] == selected_proxy_statement_result:
+            return item['results']
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Call Back Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -354,7 +445,7 @@ def load_classifier(selected_classifier : str) -> None:
         
     classifier_path = os.path.join(PUBLIC_CLASSIFIER_PATH,
                                    selected_classifier)    
-    
+
     classifier_loaded = SentenceClassifier()   
     classifier_loaded.load(input_path=classifier_path)
     
@@ -372,21 +463,17 @@ def load_classifier(selected_classifier : str) -> None:
 
 def save_classifier_cb(classifier_name : str) -> None:
     # if the classisifer exsits
-    if st.session_state[ACTIVE_CLASSIFIER_KEY]:
+    if st.session_state[ACTIVE_CLASSIFIER_KEY]:       
+        st.session_state[TRAIN_FIGURE_KEY].write_json(get_user_tmp_classifier_path()+'/fig.json')
         
-        output_file_path = os.path.join(PUBLIC_CLASSIFIER_PATH, 
-                                        classifier_name)
-        
-        st.session_state[ACTIVE_CLASSIFIER_KEY].save(output_path=output_file_path)
-        
-        output_file_path = os.path.join(PUBLIC_CLASSIFIER_PATH, 
-                                        classifier_name)
-        
-        
-        st.session_state[TRAIN_FIGURE_KEY].write_json(output_file_path+'/fig.json')
-        
-        with open(output_file_path+'/train_results.json', 'w+') as fp:
+        with open(get_user_tmp_classifier_path()+'/train_results.json', 'w+') as fp:
             json.dump(st.session_state[TRAIN_TEST_RESULTS_KEY] , fp)
+        
+        src_path = get_user_tmp_classifier_path() 
+        dst_path = os.path.join(PUBLIC_CLASSIFIER_PATH, classifier_name)
+        print(get_user_tmp_classifier_path())
+        copy_tree(src_path, dst_path)
+   
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       
 def load_file_cb(file_name : str):
@@ -514,60 +601,86 @@ def create_data_set_cb(data_set_name : str) -> None:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def display_button_cb() -> None:
-    print('\n'*100)
-    print('~'*80)
-    pprint(st.session_state[ACTIVE_DATA_SET_KEY])
-    print('~'*80)
-    pprint(st.session_state[ACTIVTE_PROXY_STATEMENT_KEY])
-    print('~'*80)
-    pprint(st.session_state[ACTIVE_LABEL_KEY])
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def train_classifier_cb(classifier_name : str,
                         user_selected_model : str,
                         selected_data_set_file : str,
-                        train_test_fraction : float) -> None:
+                        training_fraction : float,
+                        num_finetune_corr : int) -> None:
     
     # remember to load the data set file into the sessoin state
     load_file_cb(selected_data_set_file)
     
-    fine_tuned_model_path = fine_tune_llm(  path_to_data_set=convert_2_csv(selected_data_set_file),
-                                            path_to_pretrained_llm=user_selected_model,
-                                            num_corrections=5)
+    full_data_set = convert_2_data_set()    
+    train_set, test_set = full_data_set.split_training_testing(training_fraction)
     
+    fine_tuned_model_path = user_selected_model
+    if num_finetune_corr > 0:
+        fine_tuned_model_path = fine_tune_llm(  data_set=train_set,
+                                                base_output_path=get_user_tmp_classifier_path(),
+                                                path_to_pretrained_llm=user_selected_model,
+                                                num_corrections=num_finetune_corr)
+            
     c = SentenceClassifier(name = classifier_name,
                            pretrained_transformer_path=fine_tuned_model_path,
                            verbose=True)
 
-    c.set_train_data_path(convert_2_csv(selected_data_set_file))
+    c.add_data_set(train_set)
 
-    c.initialize()
-    
     c.train_classifier()
+   
+    c.save(output_path=get_user_tmp_classifier_path())
+    
+    if training_fraction < 0.99:
+    
+        results = []
+
+        for label in test_set.get_labels():
+            result_dict = c._test_classifier(   test_data_set=test_set,
+                                                test_label=label)
+            results.append(result_dict)
+        
+        st.session_state[TRAIN_TEST_RESULTS_KEY] = results    
     
     st.session_state[TRAIN_FIGURE_KEY] = c.generate_interactive_plot()
    
-    st.session_state[TRAIN_TEST_RESULTS_KEY]  = c.test_classifier(  test_data_path = 'test.csv',
-                                                                    test_label =  'COMP_CON',
-                                                                    verbose = False)  
-    
     st.session_state[ACTIVE_CLASSIFIER_KEY] = c
-    
-    st.info('Training Complete')
-    
+        
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def analyze_proxy_statements_cb(section_types : list) -> None:
+    
+    analysis_progress_bar = st.progress(0, text='Preparing Analysis')
+    
     proxy_statement_jsons = get_proxy_statement_json_files()
+    num_proxy_statements = float(len(proxy_statement_jsons))
     
     full_results = []
     
-    for file_path in proxy_statement_jsons:
-        results_dict = analyze_json_file(file_path,section_types)        
+    for i,file_path in enumerate(proxy_statement_jsons):     
+        analysis_progress_bar.progress(i/num_proxy_statements,text=file_path)
+        
+        results_dict = analyze_json_file(file_path,section_types)    
+                    
         full_results.append(results_dict)
-
+        
+    st.session_state[ACTIVE_RESULTS_KEY] = full_results
+    
+    st.info('Classification Complete.')
+    
+def view_result_cb(selected_proxy_statement_result : str,
+                   view_labels : list):
+    
+    if st.session_state[ACTIVE_RESULTS_KEY]:
+        
+        display_result = get_result(selected_proxy_statement_result)
+        
+        if display_result:
+            df = pd.DataFrame(display_result) 
+            st.table(df.loc[df['label'].isin(view_labels)])    
+        else:
+            st.sidebar.error(f'Not Found {selected_proxy_statement_result}')
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Page Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -637,6 +750,7 @@ def add_data_page():
                     args=[selected_file])
     
     with st.sidebar.popover(f'Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}'):
+        
         if st.session_state[ACTIVE_DATA_SET_KEY]:
             label_col, colour_col = st.columns([3,1])
             
@@ -647,7 +761,7 @@ def add_data_page():
                         args=[label_name,picked_colour])
             
             selected_label = st.selectbox(  label='Select Label',
-                                            options=get_labels(),
+                                            options=get_active_labels(),
                                             index=None) 
             st.button('select',
                     on_click=select_label_cb,
@@ -689,7 +803,17 @@ def create_data_set_page():
                         args=[data_set_name])
     
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+
+
+def display_classifier() -> None:
+    col_fig, col_table = st.columns([1,1])
+        
+    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:    
+        col_table.table(pd.DataFrame(st.session_state[TRAIN_TEST_RESULTS_KEY]).transpose())
+    
+    if st.session_state[TRAIN_FIGURE_KEY] != None:
+        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])        
+
 def train_page():
     
     pretrain_model_options = ['all-MiniLM-L6-v2',
@@ -703,10 +827,16 @@ def train_page():
                                             options=get_data_set_files(),
                                             index=None)
     
-    train_test_fraction = st.sidebar.slider(label='Select Training/Testing Fraction',
+    training_fraction = st.sidebar.slider(label='Select Training Fraction',
                                             min_value=0.6,
                                             max_value=1.0,
                                             value = 0.7)
+    
+    num_finetune_corr = st.sidebar.slider(  label='Select Fine Tuning Level',
+                                            min_value=0,
+                                            max_value=300,
+                                            value = 5)
+    
     
     classifier_name = st.sidebar.text_input('Classifier Name')
     
@@ -715,29 +845,25 @@ def train_page():
                       args=[classifier_name,
                             user_selected_model,
                             selected_file,
-                            train_test_fraction],
+                            training_fraction,
+                            num_finetune_corr],
                       disabled=((classifier_name == '') or (selected_file == None)))
     
     st.sidebar.button(  'Save',
                         on_click=save_classifier_cb,
                         args=[classifier_name],
-                        disabled = (not st.session_state[ACTIVE_CLASSIFIER_KEY]))
+                        disabled = (not st.session_state[ACTIVE_CLASSIFIER_KEY]) or (classifier_name == ''))
     
-    col_fig, col_table = st.columns([1,1])
-        
-    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:
-        col_table.table(st.session_state[TRAIN_TEST_RESULTS_KEY])
     
-    if st.session_state[TRAIN_FIGURE_KEY] != None:
-        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])
- 
+    display_classifier()
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      
         
 def classify_page():
     
-    selected_classifier = st.sidebar.selectbox('Select Classifier', 
+    selected_classifier = st.sidebar.selectbox('Load Classifier', 
                                                 options=get_classifiers(),
-                                                index=None)     
+                                                index=0)     
 
     st.sidebar.button('Load',
                       on_click=load_classifier,
@@ -762,14 +888,32 @@ def classify_page():
                       args=[section_types],
                       disabled=(not st.session_state[ACTIVE_CLASSIFIER_KEY] or len(section_types) ==  0))
     
-    col_fig, col_table = st.columns([1,1])
-        
-    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:
-        col_table.table(st.session_state[TRAIN_TEST_RESULTS_KEY])
     
-    if st.session_state[TRAIN_FIGURE_KEY] != None:
-        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])
+    st.sidebar.download_button('Download CSV',
+                               data=get_results_csv(),
+                               disabled=(not st.session_state[ACTIVE_RESULTS_KEY]),
+                               file_name='results.csv')
+    
+    display_classifier()
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+        
+def view_reults_page():
+    
+    if st.session_state[ACTIVE_RESULTS_KEY] == None:
+        st.error('No Results available')
+    
+    selected_proxy_statement_result = st.sidebar.selectbox( 'Proxy Statement Results',
+                                                            options=get_results_list(),
+                                                            index=None) 
+    
+    view_labels = st.sidebar.multiselect(   'Labels',
+                                            options=get_labels())
+    
+    st.sidebar.button('View',
+                      on_click=view_result_cb,
+                      args=[selected_proxy_statement_result,view_labels])  
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initialize the page
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -781,8 +925,7 @@ st.sidebar.title('Navigation')
 
 st.sidebar.markdown(f'user creds: {st.session_state[USER_CRED_KEY]}')
 
-st.sidebar.button('display',
-                  on_click=display_button_cb)
+st.sidebar.markdown(f'Classifier: {get_active_classifier_name()}')
 
 user_page_selection = st.sidebar.radio('Pages', 
                                        options=['Home',
@@ -791,7 +934,8 @@ user_page_selection = st.sidebar.radio('Pages',
                                                 'Add Data',
                                                 'Save / Review',
                                                 'Train',
-                                                'Classify'],
+                                                'Classify',
+                                                'View Results'],
                                        disabled=(not st.session_state[LOGGED_IN_KEY]))
 
 if user_page_selection == 'Create New Data Set':
@@ -806,6 +950,8 @@ elif user_page_selection == 'Train':
     train_page()
 elif user_page_selection == 'Classify':
     classify_page()
+elif user_page_selection == 'View Results':
+    view_reults_page()
 else:
     home_page()
 
