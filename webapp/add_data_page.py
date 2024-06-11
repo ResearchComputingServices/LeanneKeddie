@@ -10,10 +10,9 @@ from PDFHighlighter import PDFHighlighter
 
 def select_file_cb(pdf_file_name : str) -> None:
     
-    if pdf_file_name:
-        # create a tmp file for it proxy statement which will be highlighted      
-        create_tmp_file(pdf_file_name)
-        
+    # create a tmp file for it proxy statement which will be highlighted      
+    if create_tmp_file(pdf_file_name):
+    
         # create a PDFHighlighter for the temporary file
         st.session_state[PDF_HIGHLIGHTER_KEY] = PDFHighlighter(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY])
         
@@ -25,8 +24,8 @@ def select_file_cb(pdf_file_name : str) -> None:
         
         st.session_state[PDF_SELECTED_KEY] = True
     else:
-        st.sidebar.error('No File Selected')
-
+        st.error('ERROR')
+       
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def add_label_cb(label_name : str,
@@ -91,7 +90,8 @@ def add_data_page():
                                         index=None)    
         st.button(  'Select',
                     on_click=select_file_cb,
-                    args=[selected_file])
+                    args=[selected_file],
+                    disabled=(not selected_file))
     
     with st.sidebar.popover(f'Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}'):
         
@@ -120,10 +120,13 @@ def add_data_page():
        
     # Main Page Widgets
     if st.session_state[PDF_SELECTED_KEY]:
-                
-        with open(str(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY]) , 'rb') as pdf_file:
-            base64_pdf = base64.b64encode(pdf_file.read()).decode("utf-8")
-            pdf_display =   f"""
-                        <iframe src="data:application/pdf;base64,{base64_pdf}" width="800px" height="1000px" type="application/pdf"></iframe>
-                        """
-            st.markdown(pdf_display, unsafe_allow_html=True)   
+        
+        try:      
+            with open(str(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY]) , 'rb') as pdf_file:
+                base64_pdf = base64.b64encode(pdf_file.read()).decode("utf-8")
+                pdf_display =   f"""
+                            <iframe src="data:application/pdf;base64,{base64_pdf}" width="800px" height="1000px" type="application/pdf"></iframe>
+                            """
+                st.markdown(pdf_display, unsafe_allow_html=True)   
+        except FileNotFoundError:
+            st.error(f'Directory not found: {str(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY])}') 

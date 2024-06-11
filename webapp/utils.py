@@ -211,13 +211,18 @@ def get_proxy_statement_pdfs() -> list:
 def create_tmp_file(pdf_file_name : str):
     # build src and dst paths
     src_path = os.path.join(PROXY_STATEMENT_PDFS_PATH, pdf_file_name)
-
     dst_path = os.path.join(get_user_tmp_highlighted_path(),HIGHLIGHTED_PDF+pdf_file_name)
     
-    # copy file to tmp
-    shutil.copy(src_path, dst_path)
     st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY] = dst_path
-
+    
+    # copy file to tmp
+    
+    try:
+        shutil.copy(src_path, dst_path)
+        return True
+    except FileNotFoundError:        
+        st.error(f'[ERRC1] Unable to create tmp files at path: {dst_path}')
+        return False
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def hex_to_rgb(value):

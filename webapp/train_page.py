@@ -1,3 +1,5 @@
+from distutils.dir_util import copy_tree
+
 import streamlit as st
 
 from utils import *
@@ -11,8 +13,9 @@ from load_data_set_page import load_file_cb
  
 
 def save_classifier_cb(classifier_name : str) -> None:
+    
     # if the classisifer exsits
-    if st.session_state[ACTIVE_CLASSIFIER_KEY]:       
+    if st.session_state[ACTIVE_CLASSIFIER_KEY]:
         st.session_state[TRAIN_FIGURE_KEY].write_json(get_user_tmp_classifier_path()+'/fig.json')
         
         with open(get_user_tmp_classifier_path()+'/train_results.json', 'w+') as fp:
