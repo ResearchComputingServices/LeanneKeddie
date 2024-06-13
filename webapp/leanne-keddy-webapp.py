@@ -1,4 +1,5 @@
-
+import logging
+import sys
 
 import streamlit as st
 
@@ -15,7 +16,18 @@ from view_results_page import view_results_page
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # initialize the page
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+
+streamlit_root_logger = logging.getLogger(__name__)
+streamlit_root_logger.log(level=logging.INFO, msg=f'name: {__name__}')
+
+streamlit_root_logger = logging.getLogger(st.__name__)
+if not streamlit_root_logger.hasHandlers():
+    # streamlit_root_logger.addHandler(logging.StreamHandler())
+    streamlit_root_logger.log(level=logging.INFO, msg='App (re)started!')
+
 
 initialize_session_state()
 
