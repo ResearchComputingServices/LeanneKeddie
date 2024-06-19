@@ -6,8 +6,7 @@ import streamlit as st
 from utils import *
 
 from home_page import home_page
-from create_data_set_page import create_data_set_page
-from load_data_set_page import load_data_set_page            
+from load_data_set_page import create_load_data_set_page            
 from add_data_page import add_data_page
 from save_and_review_data_set_page import save_and_review_data_set_page
 from train_page import train_page
@@ -43,8 +42,7 @@ st.sidebar.markdown(f'Data Set: {get_active_data_set_name()}')
 
 user_page_selection = st.sidebar.radio('Pages', 
                                        options=['Home',
-                                                'Create New Data Set',
-                                                'Load Data Set',
+                                                'Create/Load Data Set',
                                                 'Add Data',
                                                 'Save / Review',
                                                 'Train',
@@ -52,23 +50,15 @@ user_page_selection = st.sidebar.radio('Pages',
                                                 'View Results'],
                                        disabled=(not st.session_state[LOGGED_IN_KEY]))
 
-if user_page_selection == 'Create New Data Set':
-    display_tabs()
-    create_data_set_page()
-elif user_page_selection == 'Load Data Set':
-    display_tabs()
-    load_data_set_page()
+if user_page_selection == 'Create/Load Data Set':
+    create_load_data_set_page()
 elif user_page_selection == 'Add Data':
-    display_tabs()
     add_data_page()
 elif user_page_selection == 'Save / Review':
-    display_tabs()
     save_and_review_data_set_page()
 elif user_page_selection == 'Train':
-    display_tabs()
     train_page()
 elif user_page_selection == 'Classify':
-    display_tabs()
     classify_page()
 elif user_page_selection == 'View Results':
     view_results_page()

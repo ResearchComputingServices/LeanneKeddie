@@ -6,6 +6,7 @@ import streamlit as st
 
 import pandas as pd
 import glob
+from pprint import pprint
 
 from SentenceClassifier.DataSet import DataSet
 
@@ -28,11 +29,11 @@ PROXY_STATEMENT_JSONS_PATH = os.path.join(PROXY_STATEMENTS_BASE_PATH, 'json')
 
 USER_DATA_PATH = '.user-data'
 PRIVATE_DATA_SET_PATH = 'data-sets'
-PRIVATE_CLASSIFIER_PATH = 'classifier'
+PRIVATE_CLASSIFIER_PATH = 'classifiers'
 
 PUBLIC_DATA_PATH = '.public-data'
 PUBLIC_CLASSIFIER_PATH = os.path.join(PUBLIC_DATA_PATH,
-                                     'classifier')
+                                     'classifiers')
 PUBLIC_DATA_SET_PATH = os.path.join(PUBLIC_DATA_PATH,
                                     'data-set')
 
@@ -114,17 +115,6 @@ def initialize_session_state():
 # Helper Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def display_classifier() -> None:
-    col_fig, col_table = st.columns([1,1])
-        
-    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:    
-        col_table.table(pd.DataFrame(st.session_state[TRAIN_TEST_RESULTS_KEY]).transpose())
-    
-    if st.session_state[TRAIN_FIGURE_KEY] != None:
-        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY])  
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 def get_user_tmp_data_path() -> str:
     return os.path.join(USER_DATA_PATH, st.session_state[USER_CRED_KEY],TMP_USER_DATA_PATH)
 
@@ -140,7 +130,7 @@ def get_user_tmp_highlighted_path() -> str:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_active_data_set() -> str:
+def get_active_data_set_name() -> str:
     active_data_set_name = 'None'
     
     if st.session_state[ACTIVE_DATA_SET_KEY]:
@@ -422,7 +412,7 @@ def get_classifiers() -> list:
     user_classifiers = [os.path.basename(x) for x in glob.glob(user_classifier_paths+'/*')]
     
     public_classsifiers = [os.path.basename(x) for x in glob.glob(PUBLIC_CLASSIFIER_PATH+'/*')]
-           
+        
     return user_classifiers + public_classsifiers
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -471,17 +461,17 @@ def get_result(selected_proxy_statement_result : str) -> dict:
         
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def display_tabs():
-    tab1, tab2, tab3 = st.tabs(["Cat", "Dog", "Owl"])
-
-    with tab1:
-        st.header("A cat")
-        st.image("https://static.streamlit.io/examples/cat.jpg", width=200)
-
-    with tab2:
-        st.header("A dog")
-        st.image("https://static.streamlit.io/examples/dog.jpg", width=200)
-
-    with tab3:
-        st.header("An owl")
-        st.image("https://static.streamlit.io/examples/owl.jpg", width=200)
+def display_classifier() -> None:
+    col_fig, col_table = st.columns([1,1])
+        
+    if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:    
+        col_table.table(pd.DataFrame(st.session_state[TRAIN_TEST_RESULTS_KEY]).transpose())
+    else:
+        st.error('No training results to display')
+    
+    if st.session_state[TRAIN_FIGURE_KEY] != None:
+        col_fig.plotly_chart(st.session_state[TRAIN_FIGURE_KEY]) 
+    else:
+        st.error('No training figure to display') 
+        
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

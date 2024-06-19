@@ -63,6 +63,7 @@ def add_labelled_text_cb(selected_text : str) -> None:
     if len(selected_text) == 0:
         st.sidebar.error('No Text Selected.')
         return    
+    
     # clear text selected text_area widget
     st.session_state.SELECTED_TEXT_KEY = ''
 
@@ -78,12 +79,31 @@ def add_labelled_text_cb(selected_text : str) -> None:
     
     st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text'].append({'text': selected_text,
                                                                    'label-id' : active_label['label-id'],
-                                                                   'file-id' : file_id})
-                                                
+                                                                   'file-id' : file_id})                                            
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def add_label_cb(label_name : str,
+                 label_colour : str) -> None:    
+    
+    colour_code = hex_to_rgb(label_colour)
+    
+    if unique_label(label_name):
+        label_id = generate_label_id()
+        
+        st.session_state[ACTIVE_DATA_SET_KEY]['labels'].append({'name' : label_name, 
+                                                                'colour' : colour_code,
+                                                                'label-id' : label_id})
+    else:
+        st.sidebar.error(f'Label "{label_name}" already exists')
+  
+    # reset the colour pick
+    # st.session_state.label_key = ''
+    # st.session_state.color_key = '#000000'
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def add_data_page():   
-    
     
     if st.session_state[ACTIVE_DATA_SET_KEY]:
         with st.sidebar.popover(f'Select Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}'):
@@ -105,13 +125,23 @@ def add_data_page():
                 st.button('select',
                         on_click=select_label_cb,
                         args=[selected_label] )
+                
+                label_col, colour_col = st.columns([3,1])
+    
+                picked_colour = colour_col.color_picker('Colour')
+                
+                label_name = label_col.text_input(  'Add Label')
+                
+                st.button(  'Add',
+                                    on_click=add_label_cb,
+                                    args=[label_name,picked_colour])
 
         selected_text = st.sidebar.text_area(label='Selected Text',
                                             key='SELECTED_TEXT_KEY')
         
-        st.sidebar.button('Add Text',
-                        on_click=add_labelled_text_cb,
-                        args=[selected_text])
+        st.sidebar.button(  'Add Text',
+                            on_click=add_labelled_text_cb,
+                            args=[selected_text])
        
     else:
         st.warning('No activate data set')
