@@ -96,17 +96,13 @@ def add_label_cb(label_name : str,
                                                                 'label-id' : label_id})
     else:
         st.sidebar.error(f'Label "{label_name}" already exists')
-  
-    # reset the colour pick
-    # st.session_state.label_key = ''
-    # st.session_state.color_key = '#000000'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def add_data_page():   
-    
+        
     if st.session_state[ACTIVE_DATA_SET_KEY]:
-        with st.sidebar.popover(f'Select Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}'):
+        with st.sidebar.popover(f'Proxy Statements'):
             selected_file = st.selectbox(   label='Available Proxy Statements',
                                             options=get_proxy_statement_pdfs(),
                                             index=None)    
@@ -115,9 +111,8 @@ def add_data_page():
                         args=[selected_file],
                         disabled=(not selected_file))
         
-        with st.sidebar.popover(f'Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}'):
-            
-            if st.session_state[ACTIVE_DATA_SET_KEY]:
+        with st.sidebar.popover(f'Select Label'):
+             if st.session_state[ACTIVE_DATA_SET_KEY]:
                
                 selected_label = st.selectbox(  label='Select Label',
                                                 options=get_active_labels(),
@@ -125,6 +120,8 @@ def add_data_page():
                 st.button('select',
                         on_click=select_label_cb,
                         args=[selected_label] )
+       
+        with st.sidebar.popover(f'Add Label'):
                 
                 label_col, colour_col = st.columns([3,1])
     
@@ -133,11 +130,11 @@ def add_data_page():
                 label_name = label_col.text_input(  'Add Label')
                 
                 st.button(  'Add',
-                                    on_click=add_label_cb,
-                                    args=[label_name,picked_colour])
+                            on_click=add_label_cb,
+                            args=[label_name,picked_colour])
 
         selected_text = st.sidebar.text_area(label='Selected Text',
-                                            key='SELECTED_TEXT_KEY')
+                                             key='SELECTED_TEXT_KEY')
         
         st.sidebar.button(  'Add Text',
                             on_click=add_labelled_text_cb,
@@ -149,6 +146,12 @@ def add_data_page():
     # TODO: move this to another function
     # Main Page Widgets
     if st.session_state[PDF_SELECTED_KEY]:
+        st.markdown(f'Selected Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}')
+        
+        label_col,_ = st.columns([1,10])        
+        label_col.color_picker(f'Active Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}',
+                                value=get_active_label_colour(),
+                                disabled=False)
         
         try:      
             with open(str(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY]) , 'rb') as pdf_file:

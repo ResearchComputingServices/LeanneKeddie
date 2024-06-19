@@ -7,7 +7,7 @@ from utils import *
 from SentenceClassifier.Classifier import SentenceClassifier
 from SentenceClassifier.FineTuner import fine_tune_llm, generate_interactive_plot
 
-from load_data_set_page import load_file_cb
+from create_load_data_set_page import load_file_cb
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  

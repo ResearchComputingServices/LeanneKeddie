@@ -6,7 +6,7 @@ import streamlit as st
 from utils import *
 
 from home_page import home_page
-from load_data_set_page import create_load_data_set_page            
+from create_load_data_set_page import create_load_data_set_page            
 from add_data_page import add_data_page
 from save_and_review_data_set_page import save_and_review_data_set_page
 from train_page import train_page

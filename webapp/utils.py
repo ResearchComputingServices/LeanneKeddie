@@ -29,11 +29,11 @@ PROXY_STATEMENT_JSONS_PATH = os.path.join(PROXY_STATEMENTS_BASE_PATH, 'json')
 
 USER_DATA_PATH = '.user-data'
 PRIVATE_DATA_SET_PATH = 'data-sets'
-PRIVATE_CLASSIFIER_PATH = 'classifiers'
+PRIVATE_CLASSIFIER_PATH = 'classifier'
 
 PUBLIC_DATA_PATH = '.public-data'
 PUBLIC_CLASSIFIER_PATH = os.path.join(PUBLIC_DATA_PATH,
-                                     'classifiers')
+                                     'classifier')
 PUBLIC_DATA_SET_PATH = os.path.join(PUBLIC_DATA_PATH,
                                     'data-set')
 
@@ -128,6 +128,16 @@ def get_user_tmp_classifier_path() -> str:
 def get_user_tmp_highlighted_path() -> str:
     return os.path.join(get_user_tmp_data_path(), 'highlighted')
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_label_colour():
+    active_colour = '#000000'
+    
+    if st.session_state[ACTIVE_LABEL_KEY]:
+        active_colour = rgb_to_hex(st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR])
+        
+    return active_colour       
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_active_data_set_name() -> str:
@@ -238,6 +248,15 @@ def hex_to_rgb(value):
     colour = tuple(float(int(value[i:i + lv // 3], 16)/255.) for i in range(0, lv, lv // 3))
     
     return colour
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def rgb_to_hex(rgb_vals):
+    r = int(256*rgb_vals[0])
+    g = int(256*rgb_vals[1])
+    b = int(256*rgb_vals[2])
+        
+    return '#%02x%02x%02x' % (r,g,b)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        
