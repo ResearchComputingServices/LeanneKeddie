@@ -3,4 +3,4 @@ headless = true
 port = 8502
 
 [browser]
-serverAddress = "Hall-1000"
+serverAddress = "rcs-nickshiel-gtx"

@@ -25,8 +25,7 @@ streamlit_root_logger.log(level=logging.INFO, msg=f'name: {__name__}')
 
 streamlit_root_logger = logging.getLogger(st.__name__)
 if not streamlit_root_logger.hasHandlers():
-    # streamlit_root_logger.addHandler(logging.StreamHandler())
-    streamlit_root_logger.log(level=logging.INFO, msg='App (re)started!')
+     streamlit_root_logger.log(level=logging.INFO, msg='App (re)started!')
 
 
 initialize_session_state()
@@ -40,6 +39,8 @@ st.sidebar.markdown(f'user creds: {get_user_cred()}')
 
 st.sidebar.markdown(f'Classifier: {get_active_classifier_name()}')
 
+st.sidebar.markdown(f'Data Set: {get_active_data_set_name()}')
+
 user_page_selection = st.sidebar.radio('Pages', 
                                        options=['Home',
                                                 'Create New Data Set',
@@ -52,16 +53,22 @@ user_page_selection = st.sidebar.radio('Pages',
                                        disabled=(not st.session_state[LOGGED_IN_KEY]))
 
 if user_page_selection == 'Create New Data Set':
+    display_tabs()
     create_data_set_page()
 elif user_page_selection == 'Load Data Set':
+    display_tabs()
     load_data_set_page()
 elif user_page_selection == 'Add Data':
+    display_tabs()
     add_data_page()
 elif user_page_selection == 'Save / Review':
+    display_tabs()
     save_and_review_data_set_page()
 elif user_page_selection == 'Train':
+    display_tabs()
     train_page()
 elif user_page_selection == 'Classify':
+    display_tabs()
     classify_page()
 elif user_page_selection == 'View Results':
     view_results_page()

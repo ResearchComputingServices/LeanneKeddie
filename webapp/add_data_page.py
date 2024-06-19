@@ -85,7 +85,7 @@ def add_labelled_text_cb(selected_text : str) -> None:
 def add_data_page():   
     
     
-    if st.session_state[ACTIVE_DATA_SET_KEY]['initialized']:
+    if st.session_state[ACTIVE_DATA_SET_KEY]:
         with st.sidebar.popover(f'Select Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}'):
             selected_file = st.selectbox(   label='Available Proxy Statements',
                                             options=get_proxy_statement_pdfs(),
@@ -98,14 +98,7 @@ def add_data_page():
         with st.sidebar.popover(f'Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}'):
             
             if st.session_state[ACTIVE_DATA_SET_KEY]:
-                label_col, colour_col = st.columns([3,1])
-                
-                picked_colour = colour_col.color_picker('Colour')  
-                label_name = label_col.text_input('Add Label')
-                st.button(  'Add',
-                            on_click=add_label_cb,
-                            args=[label_name,picked_colour])
-                
+               
                 selected_label = st.selectbox(  label='Select Label',
                                                 options=get_active_labels(),
                                                 index=None) 

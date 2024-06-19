@@ -76,11 +76,12 @@ def initialize_session_state():
         st.session_state[LABELLED_SENTENCES_KEY] = {}
 
     if ACTIVE_DATA_SET_KEY not in st.session_state:
-        st.session_state[ACTIVE_DATA_SET_KEY] =  {  'name' :           'None',
-                                                    'labels' :          [],
-                                                    'proxy-statements': [],
-                                                    'labelled-text':    [],
-                                                    'initialized':      0}
+        # st.session_state[ACTIVE_DATA_SET_KEY] =  {  'name' :           'None',
+        #                                             'labels' :          [],
+        #                                             'proxy-statements': [],
+        #                                             'labelled-text':    [],
+        #                                             'initialized':      0}
+        st.session_state[ACTIVE_DATA_SET_KEY] = None
 
     if ACTIVTE_PROXY_STATEMENT_KEY not in st.session_state:
         st.session_state[ACTIVTE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
@@ -136,6 +137,16 @@ def get_user_tmp_classifier_path() -> str:
 
 def get_user_tmp_highlighted_path() -> str:
     return os.path.join(get_user_tmp_data_path(), 'highlighted')
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_data_set() -> str:
+    active_data_set_name = 'None'
+    
+    if st.session_state[ACTIVE_DATA_SET_KEY]:
+        active_data_set_name = st.session_state[ACTIVE_DATA_SET_KEY]['name']
+    
+    return active_data_set_name
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -457,3 +468,20 @@ def get_result(selected_proxy_statement_result : str) -> dict:
 
         if item['filename'] == selected_proxy_statement_result:
             return item['results']
+        
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def display_tabs():
+    tab1, tab2, tab3 = st.tabs(["Cat", "Dog", "Owl"])
+
+    with tab1:
+        st.header("A cat")
+        st.image("https://static.streamlit.io/examples/cat.jpg", width=200)
+
+    with tab2:
+        st.header("A dog")
+        st.image("https://static.streamlit.io/examples/dog.jpg", width=200)
+
+    with tab3:
+        st.header("An owl")
+        st.image("https://static.streamlit.io/examples/owl.jpg", width=200)
