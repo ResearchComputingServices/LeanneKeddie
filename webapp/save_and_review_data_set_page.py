@@ -49,9 +49,9 @@ def save_and_review_data_set_page():
             label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]
             filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
             
-            data_list.append({'Label' : label,
-                            'Filename' : filename,
-                            'Text' : labelled_text['text']})        
+            data_list.append({  'Label' : label,
+                                'Filename' : filename,
+                                'Text' : labelled_text['text']})        
         
         df = pd.DataFrame(data_list)
         

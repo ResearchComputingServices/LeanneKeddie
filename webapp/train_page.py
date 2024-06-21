@@ -7,12 +7,13 @@ from utils import *
 from SentenceClassifier.Classifier import SentenceClassifier
 from SentenceClassifier.FineTuner import fine_tune_llm, generate_interactive_plot
 
-from load_data_set_page import load_file_cb
+from create_load_data_set_page import load_file_cb
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
 
-def save_classifier_cb(classifier_name : str) -> None:
+def save_classifier_cb(classifier_name : str,
+                       save_type : str) -> None:
     
     # if the classisifer exsits
     if st.session_state[ACTIVE_CLASSIFIER_KEY]:
@@ -22,8 +23,14 @@ def save_classifier_cb(classifier_name : str) -> None:
             json.dump(st.session_state[TRAIN_TEST_RESULTS_KEY] , fp)
         
         src_path = get_user_tmp_classifier_path() 
+        
+        # get the output path to save the file too
         dst_path = os.path.join(PUBLIC_CLASSIFIER_PATH, classifier_name)
-        print(get_user_tmp_classifier_path())
+        if save_type == 'private':
+            dst_path = os.path.join(USER_DATA_PATH,
+                                    st.session_state[USER_CRED_KEY],
+                                    PRIVATE_CLASSIFIER_PATH,
+                                    classifier_name)
         copy_tree(src_path, dst_path)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -108,11 +115,19 @@ def train_page():
                             training_fraction,
                             num_finetune_corr],
                       disabled=((classifier_name == '') or (selected_file == None)))
-    
-    st.sidebar.button(  'Save',
-                        on_click=save_classifier_cb,
-                        args=[classifier_name],
-                        disabled = (not st.session_state[ACTIVE_CLASSIFIER_KEY]) or (classifier_name == ''))
-    
+
+    with st.sidebar.popover(f'Save Classifer'):
+
+        button_col,type_cal = st.columns([1,1])
+        
+        save_type = type_cal.radio( 'Save Type',
+                                    options = ['private', 'public'],
+                                    disabled = (not st.session_state[ACTIVE_CLASSIFIER_KEY]) or (classifier_name == ''))
+        
+        button_col.button(  'Save',
+                            on_click=save_classifier_cb,
+                            args=[classifier_name, save_type],
+                            disabled = (not st.session_state[ACTIVE_CLASSIFIER_KEY]) or (classifier_name == ''))
+        
     
     display_classifier()
