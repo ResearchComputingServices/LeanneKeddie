@@ -16,6 +16,8 @@ def load_file_cb(file_name : str):
     
     st.session_state[ACTIVE_DATA_SET_KEY] = json.load(open(data_set_file_path))
 
+    st.info(f'Data Set {file_name} Loaded')
+
     # TODO: Clear the activate proxy statement and label
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,6 +31,8 @@ def create_data_set_cb(data_set_name : str) -> None:
                                                 'proxy-statements': [],
                                                 'labelled-text':    [],
                                                 'initialized':      1}
+    
+    st.info(f'Data Set {data_set_name} Created')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

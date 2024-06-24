@@ -9,7 +9,7 @@ from PDFHighlighter import PDFHighlighter
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def select_file_cb(pdf_file_name : str) -> None:
-    
+
     # create a tmp file for it proxy statement which will be highlighted      
     if create_tmp_file(pdf_file_name):
     
@@ -26,22 +26,6 @@ def select_file_cb(pdf_file_name : str) -> None:
     else:
         st.error('ERROR')
        
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def add_label_cb(label_name : str,
-                 label_colour : str) -> None:    
-    
-    colour_code = hex_to_rgb(label_colour)
-    
-    if unique_label(label_name):
-        label_id = generate_label_id()
-        
-        st.session_state[ACTIVE_DATA_SET_KEY]['labels'].append({'name' : label_name, 
-                                                                'colour' : colour_code,
-                                                                'label-id' : label_id})
-    else:
-        st.sidebar.error(f'Label "{label_name}" already exists')
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def select_label_cb(selected_label : str) -> None:
@@ -79,7 +63,8 @@ def add_labelled_text_cb(selected_text : str) -> None:
     
     st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text'].append({'text': selected_text,
                                                                    'label-id' : active_label['label-id'],
-                                                                   'file-id' : file_id})                                            
+                                                                   'file-id' : file_id,
+                                                                   'id' : generate_labelled_text_id()})                                            
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -94,6 +79,7 @@ def add_label_cb(label_name : str,
         st.session_state[ACTIVE_DATA_SET_KEY]['labels'].append({'name' : label_name, 
                                                                 'colour' : colour_code,
                                                                 'label-id' : label_id})
+        # st.sidebar.info(f'Label "{label_name}" added')
     else:
         st.sidebar.error(f'Label "{label_name}" already exists')
 
@@ -103,8 +89,12 @@ def add_data_page():
         
     if st.session_state[ACTIVE_DATA_SET_KEY]:
         with st.sidebar.popover(f'Proxy Statements'):
+            
+            year_filter = st.radio('year',
+                                    options=['all','2015','2016','2017','2018','2019'])
+            
             selected_file = st.selectbox(   label='Available Proxy Statements',
-                                            options=get_proxy_statement_pdfs(),
+                                            options=get_proxy_statement_pdfs(year_filter),
                                             index=None)    
             st.button(  'Select',
                         on_click=select_file_cb,
@@ -117,9 +107,9 @@ def add_data_page():
                 selected_label = st.selectbox(  label='Select Label',
                                                 options=get_active_labels(),
                                                 index=None) 
-                st.button('select',
-                        on_click=select_label_cb,
-                        args=[selected_label] )
+                st.button(  'select',
+                            on_click=select_label_cb,
+                            args=[selected_label] )
        
         with st.sidebar.popover(f'Add Label'):
                 
@@ -149,10 +139,9 @@ def add_data_page():
         st.markdown(f'Selected Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}')
         
         label_col,_ = st.columns([1,10])        
-        label_col.color_picker(f'Active Label: {st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]}',
+        label_col.color_picker(f'Active Label: {get_active_label_name()}',
                                 value=get_active_label_colour(),
-                                disabled=False)
-        
+                                disabled=True)        
         try:      
             with open(str(st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY]) , 'rb') as pdf_file:
                 base64_pdf = base64.b64encode(pdf_file.read()).decode("utf-8")

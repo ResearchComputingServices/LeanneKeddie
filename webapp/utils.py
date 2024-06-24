@@ -55,6 +55,8 @@ ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
 ACTIVE_CLASSIFIER_KEY = 'ACTIVE_CLASSIFIER_KEY'
 ACTIVE_RESULTS_KEY = 'ACTIVE_RESULTS_KEY'
 RESULTS_CSV_KEY = 'RESULTS_CSV_KEY'
+PROXY_STATEMENTS_KEY = 'PROXY_STATEMENTS_KEY'
+
 
 def initialize_session_state():
 
@@ -77,11 +79,6 @@ def initialize_session_state():
         st.session_state[LABELLED_SENTENCES_KEY] = {}
 
     if ACTIVE_DATA_SET_KEY not in st.session_state:
-        # st.session_state[ACTIVE_DATA_SET_KEY] =  {  'name' :           'None',
-        #                                             'labels' :          [],
-        #                                             'proxy-statements': [],
-        #                                             'labelled-text':    [],
-        #                                             'initialized':      0}
         st.session_state[ACTIVE_DATA_SET_KEY] = None
 
     if ACTIVTE_PROXY_STATEMENT_KEY not in st.session_state:
@@ -89,9 +86,10 @@ def initialize_session_state():
                                                         PROXY_STATEMENT_FILE_ID : -1}
 
     if ACTIVE_LABEL_KEY not in st.session_state:
-        st.session_state[ACTIVE_LABEL_KEY] = {LABEL_NAME : '',
-                                            LABEL_COLOUR : (0,0,0),
-                                            LABEL_ID : -1}
+        st.session_state[ACTIVE_LABEL_KEY] = None
+        # st.session_state[ACTIVE_LABEL_KEY] = {  LABEL_NAME : '',
+        #                                         LABEL_COLOUR : (0,0,0),
+        #                                         LABEL_ID : -1}
         
     if TRAIN_TEST_RESULTS_KEY  not in st.session_state:
         st.session_state[TRAIN_TEST_RESULTS_KEY] = None
@@ -108,9 +106,30 @@ def initialize_session_state():
     if RESULTS_CSV_KEY not in st.session_state:
         st.session_state[RESULTS_CSV_KEY] = None
 
+    if PROXY_STATEMENTS_KEY not in st.session_state:
+        st.session_state[PROXY_STATEMENTS_KEY] = None
+
 # if  not in st.session_state:
-#     st.session_state[] =
+#   st.session_state[] =
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def generate_proxy_statement_manifest():
     
+    if not st.session_state[PROXY_STATEMENTS_KEY]:
+        
+        st.session_state[PROXY_STATEMENTS_KEY] = {}
+        list_of_proxy_statements = [x for x in glob.glob(PROXY_STATEMENT_PDFS_PATH+'/*/*.pdf')]
+        
+        for item in list_of_proxy_statements:
+            
+            base_name = os.path.basename(item)
+            
+            if base_name not in st.session_state[PROXY_STATEMENTS_KEY]:
+                st.session_state[PROXY_STATEMENTS_KEY][base_name] = item
+            else:
+                print(f'Duplicate Proxy statement found: {item}')
+                      
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Helper Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,7 +156,27 @@ def get_active_label_colour():
         active_colour = rgb_to_hex(st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR])
         
     return active_colour       
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_label_names() -> list:
     
+    labels =  []
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
+        labels.append(label['name'])
+
+    return labels
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_label_name():
+    active_name = 'None'
+    
+    if st.session_state[ACTIVE_LABEL_KEY]:
+       active_name = st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]
+        
+    return active_name   
+  
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_active_data_set_name() -> str:
@@ -220,24 +259,33 @@ def check_credentials(user_creds : str) -> bool:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_proxy_statement_pdfs() -> list:
-    return [os.path.basename(x) for x in glob.glob(PROXY_STATEMENT_PDFS_PATH+'/*.pdf')]
-
+def get_proxy_statement_pdfs(year_filter : str) -> list:
+    
+    proxy_statements = []
+    
+    if year_filter == 'all':
+        proxy_statements = st.session_state[PROXY_STATEMENTS_KEY].keys()
+    else:
+        for key in st.session_state[PROXY_STATEMENTS_KEY].keys():
+            if year_filter in key:
+                proxy_statements.append(key)
+    
+    return proxy_statements
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def create_tmp_file(pdf_file_name : str):
     # build src and dst paths
-    src_path = os.path.join(PROXY_STATEMENT_PDFS_PATH, pdf_file_name)
+    src_path = st.session_state[PROXY_STATEMENTS_KEY][pdf_file_name]
     dst_path = os.path.join(get_user_tmp_highlighted_path(),HIGHLIGHTED_PDF+pdf_file_name)
     
     st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY] = dst_path
-    
+        
     # copy file to tmp
-    
     try:
         shutil.copy(src_path, dst_path)
         return True
-    except FileNotFoundError:        
+    except FileNotFoundError:  
+              
         st.error(f'[ERRC1] Unable to create tmp files at path: {dst_path}')
         return False
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -327,11 +375,19 @@ def add_proxy_to_data_set(pdf_file_name : str) -> None:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_label_from_name(label_name : str) -> dict:
+def get_label_id_from_name(label_name : str) -> int:
+    
+    label_id = -1
     
     for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
         if label[LABEL_NAME] == label_name:
-            return label
+            label_id = label[LABEL_ID]
+
+    return label_id
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def generate_labelled_text_id():
+    return len(st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text'])+1
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -340,7 +396,6 @@ def get_data_set_files():
     user_data_sets_path = os.path.join( USER_DATA_PATH,
                                         st.session_state[USER_CRED_KEY],
                                         PRIVATE_DATA_SET_PATH)
-    
     
     user_data_sets = [os.path.basename(x) for x in glob.glob(user_data_sets_path+'/*.json')]
     
@@ -351,11 +406,22 @@ def get_data_set_files():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
 def get_label_from_id(label_id : int) -> dict:
-    labels_dict = st.session_state[ACTIVE_DATA_SET_KEY]['labels']
-
-    for label in labels_dict:
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
         if label['label-id'] == label_id:
             return label
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+def get_label_name_from_id(label_id : int) -> dict:
+    
+    label_name = 'UNKNOWN'
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
+        if label['label-id'] == label_id:
+            label_name = label[LABEL_NAME]
+
+    return label_name
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
