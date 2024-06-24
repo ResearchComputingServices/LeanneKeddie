@@ -13,12 +13,41 @@ from SentenceClassifier.DataSet import DataSet
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Dictionary keys
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+# Active Data Set Dict Keys
+DATA_SET_PROXY_STATEMENTS = 'proxy-statements'
 PROXY_STATEMENT_FILENAME = 'filename'
 PROXY_STATEMENT_FILE_ID = 'file-id'
 
+DATA_SET_LABELS = 'labels'
 LABEL_NAME = 'name'
 LABEL_COLOUR = 'colour'
 LABEL_ID = 'label-id'
+
+DATA_SET_LABELLED_TEXT = 'labelled-text'
+LABELLED_TEXT_TEXT = "text"
+LABELLED_TEXT_FILE_ID = PROXY_STATEMENT_FILE_ID
+LABELLED_TEXT_LABEL_ID = LABEL_ID
+LABELLED_TEXT_ID = 'id'
+DATA_SET_INITIALIZED = 'initialized'
+
+# ExtractedDocument Dict Keys
+EXTRACTED_DOCUMENT_FILE_PATH = 'file_path'
+EXTRACTED_DOCUMENT_PAGES = 'document_pages'
+EXTRACTED_DOCUMENT_TEXT_BLOCKS = 'document_text_blocks'
+EXTRACTED_DOCUMENT_TEXT_BLOCK_LABEL = 'label'
+EXTRACTED_DOCUMENT_TEXT_BLOCKS_SENTENCES = 'sentences'
+EXTRACTED_DOCUMENT_TEXT_BLOCKS_SENTENCES_TEXT = 'text'
+
+# Results Dict Keys
+RESULTS_DICT_FILENAME = 'filename'
+RESULTS_DICT_RESULTS = 'results'
+
+# Result Dict Keys
+RESULT_TEXT = 'text'
+RESULT_LABEL = 'label'
+RESULT_CONF = 'conf'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Global Constants
@@ -49,14 +78,16 @@ PDF_HIGHLIGHTER_KEY = 'PDF_HIGHLIGHTER_KEY'
 LABELLED_SENTENCES_KEY = 'LABELLED_SENTENCES_KEY'
 TRAIN_TEST_RESULTS_KEY = 'TRAIN_TEST_RESULTS_KEY'
 TRAIN_FIGURE_KEY = 'TRAIN_FIGURE_KEY'
-ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'
-ACTIVTE_PROXY_STATEMENT_KEY = 'PDF_ORIGINAL_FILE_PATH_KEY'
+
+PROXY_STATEMENTS_KEY = 'PROXY_STATEMENTS_KEY'                   # dictionary of proxy statements {base-name : paths}
+
+ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'                     # dictionary of active data set
+ACTIVE_PROXY_STATEMENT_KEY = 'PDF_ORIGINAL_FILE_PATH_KEY'
 ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
 ACTIVE_CLASSIFIER_KEY = 'ACTIVE_CLASSIFIER_KEY'
 ACTIVE_RESULTS_KEY = 'ACTIVE_RESULTS_KEY'
-RESULTS_CSV_KEY = 'RESULTS_CSV_KEY'
-PROXY_STATEMENTS_KEY = 'PROXY_STATEMENTS_KEY'
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def initialize_session_state():
 
@@ -81,15 +112,12 @@ def initialize_session_state():
     if ACTIVE_DATA_SET_KEY not in st.session_state:
         st.session_state[ACTIVE_DATA_SET_KEY] = None
 
-    if ACTIVTE_PROXY_STATEMENT_KEY not in st.session_state:
-        st.session_state[ACTIVTE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
+    if ACTIVE_PROXY_STATEMENT_KEY not in st.session_state:
+        st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
                                                         PROXY_STATEMENT_FILE_ID : -1}
 
     if ACTIVE_LABEL_KEY not in st.session_state:
         st.session_state[ACTIVE_LABEL_KEY] = None
-        # st.session_state[ACTIVE_LABEL_KEY] = {  LABEL_NAME : '',
-        #                                         LABEL_COLOUR : (0,0,0),
-        #                                         LABEL_ID : -1}
         
     if TRAIN_TEST_RESULTS_KEY  not in st.session_state:
         st.session_state[TRAIN_TEST_RESULTS_KEY] = None
@@ -102,9 +130,6 @@ def initialize_session_state():
 
     if ACTIVE_RESULTS_KEY not in st.session_state:
         st.session_state[ACTIVE_RESULTS_KEY] = None
-
-    if RESULTS_CSV_KEY not in st.session_state:
-        st.session_state[RESULTS_CSV_KEY] = None
 
     if PROXY_STATEMENTS_KEY not in st.session_state:
         st.session_state[PROXY_STATEMENTS_KEY] = None
@@ -149,6 +174,16 @@ def get_user_tmp_highlighted_path() -> str:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def get_active_label_name():
+    active_name = 'None'
+    
+    if st.session_state[ACTIVE_LABEL_KEY]:
+       active_name = st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]
+        
+    return active_name  
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 def get_active_label_colour():
     active_colour = '#000000'
     
@@ -163,19 +198,51 @@ def get_label_names() -> list:
     
     labels =  []
     
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        labels.append(label['name'])
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        labels.append(label[LABEL_NAME])
 
     return labels
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_active_label_name():
-    active_name = 'None'
+def get_label_from_name(selected_label) -> dict:
     
-    if st.session_state[ACTIVE_LABEL_KEY]:
-       active_name = st.session_state[ACTIVE_LABEL_KEY][LABEL_NAME]
-        
-    return active_name   
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        if label[LABEL_NAME] == selected_label:
+            return label
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_label_id_from_name(label_name : str) -> int:
+    
+    label_id = -1
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        if label[LABEL_NAME] == label_name:
+            label_id = label[LABEL_ID]
+
+    return label_id
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+def get_label_from_id(label_id : int) -> dict:
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        if label[LABEL_ID] == label_id:
+            return label
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+def get_label_name_from_id(label_id : int) -> dict:
+    
+    label_name = 'UNKNOWN'
+    
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        if label[LABEL_ID] == label_id:
+            label_name = label[LABEL_NAME]
+
+    return label_name
+
   
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -183,10 +250,28 @@ def get_active_data_set_name() -> str:
     active_data_set_name = 'None'
     
     if st.session_state[ACTIVE_DATA_SET_KEY]:
-        active_data_set_name = st.session_state[ACTIVE_DATA_SET_KEY]['name']
+        active_data_set_name = st.session_state[ACTIVE_DATA_SET_KEY][LABEL_NAME]
     
     return active_data_set_name
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_proxy_statement_name() -> str:
+    active_proxy_statement_name = 'None'
+    
+    if st.session_state[ACTIVE_PROXY_STATEMENT_KEY]:
+        active_proxy_statement_name = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]
+    
+    return active_proxy_statement_name
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_file_id_from_name(filename : str) -> int:
+    
+    for file in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS]:
+        if file[PROXY_STATEMENT_FILENAME] == filename:
+            return file[PROXY_STATEMENT_FILE_ID]
+    
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_active_classifier_name():
@@ -209,15 +294,15 @@ def convert_2_data_set() -> DataSet:
     
     data_set = DataSet()
     
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        data_set.labels[label['name']] = label['label-id']
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        data_set.labels[label[LABEL_NAME]] = label[LABEL_ID]
     
     data_list = []
     
-    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
             
             label =  get_label_from_id(labelled_text[LABEL_ID])[LABEL_NAME]            
-            data_list.append([label,labelled_text['text']])
+            data_list.append([label,labelled_text[LABELLED_TEXT_TEXT]])
     
     data_set.read_data_list(data_list)
             
@@ -238,8 +323,8 @@ def get_active_labels() -> list:
 
     list_of_labels = []
 
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        list_of_labels.append(label['name'])
+    for label in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]:
+        list_of_labels.append(label[LABEL_NAME])
                
     return list_of_labels
 
@@ -326,25 +411,44 @@ def get_results_csv():
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+def generate_labelled_text_id():
+    return len(st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT])+1
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def generate_label_id() -> int:
-    return len(st.session_state[ACTIVE_DATA_SET_KEY]['labels'])
+    return len(st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS])
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def generate_file_id() -> int:
-    return len(st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements'])
+    return len(st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS])
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def convert_2_df() -> pd.DataFrame:
+    data_list = []
+    
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
+                    
+        label =  get_label_name_from_id(labelled_text[LABEL_ID])
+        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+        
+        data_list.append({  'Label' : label,
+                            'Filename' : filename,
+                            'Text' : labelled_text[LABELLED_TEXT_TEXT],
+                            'Delete' : False,
+                            'id': labelled_text[LABELLED_TEXT_ID]})        
+    
+    return pd.DataFrame(data_list)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def unique_label(label_name : str) -> bool:
     
-    labels_dict = st.session_state[ACTIVE_DATA_SET_KEY]['labels']
+    labels_dict = st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELS]
     
-    if any(label['name'] == label_name for label in labels_dict):
+    if any(label[LABEL_NAME] == label_name for label in labels_dict):
         return False
        
     return True
@@ -353,9 +457,9 @@ def unique_label(label_name : str) -> bool:
 
 def check_for_previous_highlights(pdf_file_name : str) -> bool:
     
-    for statement in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
+    for statement in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS]:
         if statement[PROXY_STATEMENT_FILENAME] == pdf_file_name:
-            st.session_state[ACTIVTE_PROXY_STATEMENT_KEY] = statement
+            st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = statement
             return True
        
     return False
@@ -369,25 +473,9 @@ def add_proxy_to_data_set(pdf_file_name : str) -> None:
     new_proxy_statement_dict = {PROXY_STATEMENT_FILENAME : pdf_file_name,
                                 PROXY_STATEMENT_FILE_ID : file_id}
     
-    st.session_state[ACTIVTE_PROXY_STATEMENT_KEY] = new_proxy_statement_dict
+    st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = new_proxy_statement_dict
     
-    st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements'].append(new_proxy_statement_dict)
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def get_label_id_from_name(label_name : str) -> int:
-    
-    label_id = -1
-    
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        if label[LABEL_NAME] == label_name:
-            label_id = label[LABEL_ID]
-
-    return label_id
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def generate_labelled_text_id():
-    return len(st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text'])+1
+    st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS].append(new_proxy_statement_dict)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -403,25 +491,7 @@ def get_data_set_files():
        
     return user_data_sets + public_data_sets
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-def get_label_from_id(label_id : int) -> dict:
-    
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        if label['label-id'] == label_id:
-            return label
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-def get_label_name_from_id(label_id : int) -> dict:
-    
-    label_name = 'UNKNOWN'
-    
-    for label in st.session_state[ACTIVE_DATA_SET_KEY]['labels']:
-        if label['label-id'] == label_id:
-            label_name = label[LABEL_NAME]
-
-    return label_name
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -429,8 +499,8 @@ def get_labelled_text_from_file_id(file_id : int) -> list:
     
     labelled_texts = []
     
-    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text']:
-        if labelled_text['file-id'] == file_id:
+    for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
+        if labelled_text[PROXY_STATEMENT_FILE_ID] == file_id:
             labelled_texts.append(labelled_text)
         
     return labelled_texts
@@ -439,13 +509,13 @@ def get_labelled_text_from_file_id(file_id : int) -> list:
 
 def apply_previous_highlights() -> None:
     
-    file_id = st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILE_ID]
+    file_id = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILE_ID]
     labelled_texts = get_labelled_text_from_file_id(file_id)
     
     for labelled_text in labelled_texts:
     
-        label_colour = get_label_from_id(labelled_text['label-id'])['colour']
-        text = labelled_text['text']
+        label_colour = get_label_from_id(labelled_text[LABELLED_TEXT_LABEL_ID])[LABEL_COLOUR]
+        text = labelled_text[LABELLED_TEXT_TEXT]
     
         st.session_state[PDF_HIGHLIGHTER_KEY].highlight(phrase=text,
                                                         colour=label_colour)      
@@ -468,7 +538,7 @@ def get_data_set_path(data_set_file_name : str):
 
 def get_file_from_id(file_id : int) -> dict:
         
-    for file_dict in st.session_state[ACTIVE_DATA_SET_KEY]['proxy-statements']:
+    for file_dict in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS]:
         if file_dict[PROXY_STATEMENT_FILE_ID] == file_id:
             return file_dict
 
@@ -516,24 +586,35 @@ def analyze_json_file(json_file_path : str,
     # results of classification will be stored in this dict
     results_dict = {}
     
-    json_dict = json.load(open(json_file_path))
+    extract_doc_dict = json.load(open(json_file_path))
     
-    results_dict['filename'] = os.path.basename(json_dict['file_path'])
-    results_dict['results'] = []
+    results_dict[RESULTS_DICT_FILENAME] = os.path.basename(extract_doc_dict[EXTRACTED_DOCUMENT_FILE_PATH])
+    results_dict[RESULTS_DICT_RESULTS] = []
     
     # extract all the text from the given json that needs to be analyzed
     data_list = []
-    for page in json_dict['document_pages']:
-        for text_block in page['document_text_blocks']:
-            if text_block['label'] in section_types:
-                for sentence in text_block['sentences']:
-                    data_list.append(['UNKNOWN',sentence['text']])
+    for page in extract_doc_dict[EXTRACTED_DOCUMENT_PAGES]:
+        for text_block in page[EXTRACTED_DOCUMENT_TEXT_BLOCKS]:
+            if text_block[EXTRACTED_DOCUMENT_TEXT_BLOCK_LABEL] in section_types:
+                for sentence in text_block[EXTRACTED_DOCUMENT_TEXT_BLOCKS_SENTENCES]:
+                    data_list.append(['UNKNOWN',sentence[EXTRACTED_DOCUMENT_TEXT_BLOCKS_SENTENCES_TEXT]])
     
     # run the analysis
     if len(data_list) > 0:
-        results_dict['results'] = c.classify_list(data_list)
+        results_dict[RESULTS_DICT_RESULTS] = c.classify_list(data_list)
         
     return results_dict
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def search_active_data_set(list_name,key, value):
+    
+    search_results = []
+    
+    if st.session_state[ACTIVE_DATA_SET_KEY]:    
+        search_results= [item for item in st.session_state[ACTIVE_DATA_SET_KEY][list_name] if item.get(key) == value]
+        
+    return search_results
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

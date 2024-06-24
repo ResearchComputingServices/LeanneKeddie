@@ -3,6 +3,13 @@ import streamlit as st
 from utils import *
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def clear_add_data_page():
+    st.session_state[PDF_SELECTED_KEY] = False
+    st.session_state[ACTIVE_LABEL_KEY] = None
+    st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = None
+    st.session_state[PDF_HIGHLIGHTER_KEY] = None
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def load_file_cb(file_name : str):
     
@@ -18,7 +25,8 @@ def load_file_cb(file_name : str):
 
     st.info(f'Data Set {file_name} Loaded')
 
-    # TODO: Clear the activate proxy statement and label
+    # clear the active pdf and label
+    clear_add_data_page()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -31,8 +39,11 @@ def create_data_set_cb(data_set_name : str) -> None:
                                                 'proxy-statements': [],
                                                 'labelled-text':    [],
                                                 'initialized':      1}
-    
+        
     st.info(f'Data Set {data_set_name} Created')
+
+    # clear the active pdf and label
+    clear_add_data_page()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -41,7 +52,8 @@ def create_load_data_set_page():
     data_set_name = st.sidebar.text_input('Data Set Name:')
     st.sidebar.button(  'Create',
                         on_click=create_data_set_cb,
-                        args=[data_set_name])
+                        args=[data_set_name],
+                        disabled=(data_set_name == ''))
     
     selected_file = st.sidebar.selectbox(   label='Data Set Files',
                                             options=get_data_set_files(),

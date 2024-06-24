@@ -59,7 +59,7 @@ def add_labelled_text_cb(selected_text : str) -> None:
     st.session_state[PDF_HIGHLIGHTER_KEY].save()   
     
     # Save the labelled sentence for the session
-    file_id = st.session_state[ACTIVTE_PROXY_STATEMENT_KEY]['file-id']
+    file_id = st.session_state[ACTIVE_PROXY_STATEMENT_KEY]['file-id']
     
     st.session_state[ACTIVE_DATA_SET_KEY]['labelled-text'].append({'text': selected_text,
                                                                    'label-id' : active_label['label-id'],
@@ -136,7 +136,7 @@ def add_data_page():
     # TODO: move this to another function
     # Main Page Widgets
     if st.session_state[PDF_SELECTED_KEY]:
-        st.markdown(f'Selected Proxy Statement: {st.session_state[ACTIVTE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]}')
+        st.markdown(f'Selected Proxy Statement: {get_active_proxy_statement_name()}')
         
         label_col,_ = st.columns([1,10])        
         label_col.color_picker(f'Active Label: {get_active_label_name()}',
