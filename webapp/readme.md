@@ -19,7 +19,7 @@ proper passages can be highlighted.
 
 Each dict contains:
 1. the base file name of the proxy statement pdf (key: PROXY_STATEMENT_FILENAME)
-2.  a unique file id (key: PROXY_STATEMENT_FILE_ID)
+2. a unique file id (key: PROXY_STATEMENT_FILE_ID)
 
 ### List of Label Dict
 
