@@ -37,8 +37,9 @@ This is a list of all the passages which have been labelled by the user.
 Each dict contains:
 1. The text labelled (key: LABELLED_TEXT_TEXT)
 2. The proxy statement PDFs file id (key: LABELLED_TEXT_FILE_ID)
-3. The label id (key: LABELLED_TEXT_LABEL_ID)
-4. A unique id (key: LABELLED_TEXT_ID)
+3. The page on which the text is found (key: LABELLED_TEXT_PG_NUM)
+4. The label id (key: LABELLED_TEXT_LABEL_ID)
+5. A unique id (key: LABELLED_TEXT_ID)
 
 ## Active Results List
 
