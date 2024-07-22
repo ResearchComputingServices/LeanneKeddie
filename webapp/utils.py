@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import numpy as np
 
 import streamlit as st
 
@@ -19,6 +20,7 @@ from SentenceClassifier.DataSet import DataSet
 DATA_SET_PROXY_STATEMENTS = 'proxy-statements'
 PROXY_STATEMENT_FILENAME = 'filename'
 PROXY_STATEMENT_FILE_ID = 'file-id'
+PROXY_STATEMENT_NAME = 'name'
 
 DATA_SET_LABELS = 'labels'
 LABEL_NAME = 'name'
@@ -70,6 +72,13 @@ TMP_USER_DATA_PATH = 'tmp'
 HIGHLIGHTED_PDF = 'highlighed_'
 JSON_EXT = '.json'
 
+#LIST_OF_PROXY_STATEMEMT_YEARS = ['2016','2017','2018','2019','2020','2021','2022']
+LIST_OF_PROXY_STATEMEMT_YEARS = ['test']
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Session State Keys
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 LOGGED_IN_KEY = 'LOGGED_IN_KEY'
 USER_CRED_KEY = 'USER_CRED_KEY'
 PDF_SELECTED_KEY = 'PDF_SELECTED_KEY'
@@ -79,13 +88,17 @@ LABELLED_SENTENCES_KEY = 'LABELLED_SENTENCES_KEY'
 TRAIN_TEST_RESULTS_KEY = 'TRAIN_TEST_RESULTS_KEY'
 TRAIN_FIGURE_KEY = 'TRAIN_FIGURE_KEY'
 
-PROXY_STATEMENTS_KEY = 'PROXY_STATEMENTS_KEY'                   # dictionary of proxy statements {base-name : paths}
+# dictionary of proxy statements {base-name : paths}
+PROXY_STATEMENTS_KEY = 'PROXY_STATEMENTS_KEY'                   
+# dictionary of active data set
+ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'                     
 
-ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'                     # dictionary of active data set
 ACTIVE_PROXY_STATEMENT_KEY = 'PDF_ORIGINAL_FILE_PATH_KEY'
+ACTIVE_PAGE_NUMBER_KEY = 'ACTIVE_PAGE_NUMBER_KEY'
 ACTIVE_LABEL_KEY = 'ACTIVE_LABEL_KEY'
 ACTIVE_CLASSIFIER_KEY = 'ACTIVE_CLASSIFIER_KEY'
 ACTIVE_RESULTS_KEY = 'ACTIVE_RESULTS_KEY'
+ACTIVE_PROXY_STATEMENT_NAME_KEY = 'ACTIVE_PROXY_STATEMENT_NAME_KEY'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -114,7 +127,8 @@ def initialize_session_state():
 
     if ACTIVE_PROXY_STATEMENT_KEY not in st.session_state:
         st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
-                                                        PROXY_STATEMENT_FILE_ID : -1}
+                                                        PROXY_STATEMENT_FILE_ID : -1,
+                                                        PROXY_STATEMENT_NAME : ''}
 
     if ACTIVE_LABEL_KEY not in st.session_state:
         st.session_state[ACTIVE_LABEL_KEY] = None
@@ -134,27 +148,35 @@ def initialize_session_state():
     if PROXY_STATEMENTS_KEY not in st.session_state:
         st.session_state[PROXY_STATEMENTS_KEY] = None
 
+    if ACTIVE_PAGE_NUMBER_KEY not in st.session_state:
+        st.session_state[ACTIVE_PAGE_NUMBER_KEY] = 0
+
+    if ACTIVE_PROXY_STATEMENT_NAME_KEY not in st.session_state:
+        st.session_state[ACTIVE_PROXY_STATEMENT_NAME_KEY] = None
+
 # if  not in st.session_state:
 #   st.session_state[] =
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+                                          
 def generate_proxy_statement_manifest():
     
     if not st.session_state[PROXY_STATEMENTS_KEY]:
         
         st.session_state[PROXY_STATEMENTS_KEY] = {}
-        list_of_proxy_statements = [x for x in glob.glob(PROXY_STATEMENT_PDFS_PATH+'/*/*.pdf')]
-        
-        for item in list_of_proxy_statements:
+                
+        for year in LIST_OF_PROXY_STATEMEMT_YEARS:
             
-            base_name = os.path.basename(item)
+            dir_path = os.path.join(PROXY_STATEMENT_PDFS_PATH, year)
+            list_of_proxy_names = get_proxy_statements_in_dir(dir_path)
             
-            if base_name not in st.session_state[PROXY_STATEMENTS_KEY]:
-                st.session_state[PROXY_STATEMENTS_KEY][base_name] = item
-            else:
-                print(f'Duplicate Proxy statement found: {item}')
-                      
+            for base_name in list_of_proxy_names:          
+                proxy_dir_path = os.path.join(dir_path, base_name)
+                if base_name not in st.session_state[PROXY_STATEMENTS_KEY]:
+                    st.session_state[PROXY_STATEMENTS_KEY][base_name] = proxy_dir_path
+                else:
+                    print(f'Duplicate Proxy statement found: {proxy_dir_path}')                      
+           
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Helper Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -190,7 +212,21 @@ def get_active_label_colour():
     if st.session_state[ACTIVE_LABEL_KEY]:
         active_colour = rgb_to_hex(st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR])
         
-    return active_colour       
+    return active_colour  
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_label_colour_image():
+   
+    active_colour = (0,0,0) 
+    if st.session_state[ACTIVE_LABEL_KEY]:
+        active_colour = st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR]
+    
+    # colour_block = np.ndarray((100,100,3), np.uint8)    
+    
+    colour_block = np.full((30,30,3), active_colour)
+      
+    return colour_block      
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -260,7 +296,7 @@ def get_active_proxy_statement_name() -> str:
     active_proxy_statement_name = 'None'
     
     if st.session_state[ACTIVE_PROXY_STATEMENT_KEY]:
-        active_proxy_statement_name = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]
+        active_proxy_statement_name = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_NAME]
     
     return active_proxy_statement_name
 
@@ -344,24 +380,69 @@ def check_credentials(user_creds : str) -> bool:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def get_proxy_statement_pdfs(year_filter : str) -> list:
+def get_labelled_proxy_statements() -> list:
+    return []
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_proxy_statements_in_dir(directory_path : str) -> list:
+    
+    directory_names = []
+
+    for item in os.listdir(directory_path):
+        item_path = os.path.join(directory_path, item)
+        if os.path.isdir(item_path):
+            directory_names.append(item)
+
+    return directory_names
+    
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_proxy_statements_by_years(year_list : list) -> list:
     
     proxy_statements = []
     
-    if year_filter == 'all':
-        proxy_statements = st.session_state[PROXY_STATEMENTS_KEY].keys()
-    else:
-        for key in st.session_state[PROXY_STATEMENTS_KEY].keys():
-            if year_filter in key:
-                proxy_statements.append(key)
-    
+    for year in year_list:
+        dir_path = os.path.join(PROXY_STATEMENT_PDFS_PATH, year)
+
+        if os.path.exists(dir_path):
+            proxy_statements.extend(get_proxy_statements_in_dir(dir_path))
+
     return proxy_statements
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def create_tmp_file(pdf_file_name : str):
+def get_proxy_statement_names(requested_filter : str) -> list:
+    
+    proxy_statements = []
+    
+    if requested_filter == 'labelled':
+        proxy_statements =  get_labelled_proxy_statements()
+    else:
+        year_list = [requested_filter]
+        if requested_filter == 'all':
+            year_list = LIST_OF_PROXY_STATEMEMT_YEARS
+
+        proxy_statements = get_proxy_statements_by_years(year_list)
+        
+    return proxy_statements
+    
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def create_tmp_file():
+    
+    num_leading_zeros = 4 - len(str(st.session_state[ACTIVE_PAGE_NUMBER_KEY] + 1))
+    page_num = st.session_state[ACTIVE_PAGE_NUMBER_KEY]
+   
+    active_proxy_statement_name = st.session_state[ACTIVE_PROXY_STATEMENT_NAME_KEY]
+    active_pdf_dir_path = st.session_state[PROXY_STATEMENTS_KEY][active_proxy_statement_name] 
+    
+    active_pdf_file_path = f"{active_pdf_dir_path}/page_{'0'*num_leading_zeros}{page_num + 1}.pdf"
+ 
     # build src and dst paths
-    src_path = st.session_state[PROXY_STATEMENTS_KEY][pdf_file_name]
-    dst_path = os.path.join(get_user_tmp_highlighted_path(),HIGHLIGHTED_PDF+pdf_file_name)
+    src_path = active_pdf_file_path
+    dst_path = os.path.join(get_user_tmp_highlighted_path(),HIGHLIGHTED_PDF+active_proxy_statement_name)
     
     st.session_state[PDF_HIGHLIGHTED_FILE_PATH_KEY] = dst_path
         
@@ -432,7 +513,7 @@ def convert_2_df() -> pd.DataFrame:
     for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
                     
         label =  get_label_name_from_id(labelled_text[LABEL_ID])
-        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_NAME]
         
         data_list.append({  'Label' : label,
                             'Filename' : filename,
@@ -471,7 +552,8 @@ def add_proxy_to_data_set(pdf_file_name : str) -> None:
     file_id = generate_file_id()
     
     new_proxy_statement_dict = {PROXY_STATEMENT_FILENAME : pdf_file_name,
-                                PROXY_STATEMENT_FILE_ID : file_id}
+                                PROXY_STATEMENT_FILE_ID : file_id,
+                                PROXY_STATEMENT_NAME : st.session_state[ACTIVE_PROXY_STATEMENT_NAME_KEY]}
     
     st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = new_proxy_statement_dict
     
