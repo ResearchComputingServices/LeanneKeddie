@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import numpy as np
 
 import streamlit as st
 
@@ -19,6 +20,7 @@ from SentenceClassifier.DataSet import DataSet
 DATA_SET_PROXY_STATEMENTS = 'proxy-statements'
 PROXY_STATEMENT_FILENAME = 'filename'
 PROXY_STATEMENT_FILE_ID = 'file-id'
+PROXY_STATEMENT_NAME = 'name'
 
 DATA_SET_LABELS = 'labels'
 LABEL_NAME = 'name'
@@ -125,7 +127,8 @@ def initialize_session_state():
 
     if ACTIVE_PROXY_STATEMENT_KEY not in st.session_state:
         st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = {PROXY_STATEMENT_FILENAME : '',
-                                                        PROXY_STATEMENT_FILE_ID : -1}
+                                                        PROXY_STATEMENT_FILE_ID : -1,
+                                                        PROXY_STATEMENT_NAME : ''}
 
     if ACTIVE_LABEL_KEY not in st.session_state:
         st.session_state[ACTIVE_LABEL_KEY] = None
@@ -209,7 +212,21 @@ def get_active_label_colour():
     if st.session_state[ACTIVE_LABEL_KEY]:
         active_colour = rgb_to_hex(st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR])
         
-    return active_colour       
+    return active_colour  
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def get_active_label_colour_image():
+   
+    active_colour = (0,0,0) 
+    if st.session_state[ACTIVE_LABEL_KEY]:
+        active_colour = st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR]
+    
+    # colour_block = np.ndarray((100,100,3), np.uint8)    
+    
+    colour_block = np.full((30,30,3), active_colour)
+      
+    return colour_block      
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -279,7 +296,7 @@ def get_active_proxy_statement_name() -> str:
     active_proxy_statement_name = 'None'
     
     if st.session_state[ACTIVE_PROXY_STATEMENT_KEY]:
-        active_proxy_statement_name = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILENAME]
+        active_proxy_statement_name = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_NAME]
     
     return active_proxy_statement_name
 
@@ -496,7 +513,7 @@ def convert_2_df() -> pd.DataFrame:
     for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
                     
         label =  get_label_name_from_id(labelled_text[LABEL_ID])
-        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
+        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_NAME]
         
         data_list.append({  'Label' : label,
                             'Filename' : filename,
@@ -535,7 +552,8 @@ def add_proxy_to_data_set(pdf_file_name : str) -> None:
     file_id = generate_file_id()
     
     new_proxy_statement_dict = {PROXY_STATEMENT_FILENAME : pdf_file_name,
-                                PROXY_STATEMENT_FILE_ID : file_id}
+                                PROXY_STATEMENT_FILE_ID : file_id,
+                                PROXY_STATEMENT_NAME : st.session_state[ACTIVE_PROXY_STATEMENT_NAME_KEY]}
     
     st.session_state[ACTIVE_PROXY_STATEMENT_KEY] = new_proxy_statement_dict
     

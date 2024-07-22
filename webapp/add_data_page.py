@@ -33,6 +33,7 @@ def get_active_proxy_statement_pdf_file_name() -> str:
 def update_displayed_pdf() -> None:
 
     pdf_file_name = get_active_proxy_statement_pdf_file_name()
+
     print(f'Active pdf: {pdf_file_name}')
     
     # create a tmp file for it proxy statement which will be highlighted      
@@ -134,7 +135,7 @@ def add_label_cb(label_name : str,
 def add_data_page():   
         
     if st.session_state[ACTIVE_DATA_SET_KEY]:
-        with st.sidebar.popover(f'Proxy Statements'):
+        with st.sidebar.popover(f'Proxy Statements: {get_active_proxy_statement_name()}'):
             
             year_filter = st.radio('year',
                                     options=['all','2015','2016','2017','2018','2019','labelled'],)
@@ -147,7 +148,9 @@ def add_data_page():
                         args=[selected_file],
                         disabled=(not selected_file))
         
-        with st.sidebar.popover(f'Select Label'):
+        select_col, colour_label = st.sidebar.columns([3,1])
+        
+        with select_col.popover(f'Select Label: {get_active_label_name()}'):
              if st.session_state[ACTIVE_DATA_SET_KEY]:
                
                 selected_label = st.selectbox(  label='Select Label',
@@ -156,6 +159,8 @@ def add_data_page():
                 st.button(  'select',
                             on_click=select_label_cb,
                             args=[selected_label] )
+        
+        colour_label.image(get_active_label_colour_image())
        
         with st.sidebar.popover(f'Add Label'):
                 
