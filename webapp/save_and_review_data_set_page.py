@@ -37,6 +37,7 @@ def update_data_set_cb(update_data_frame : pd.DataFrame):
     new_labelled_texts = []
 
     for row in update_data_frame.iloc:
+
         if row['Delete']:
             continue
         

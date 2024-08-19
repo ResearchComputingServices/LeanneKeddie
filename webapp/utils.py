@@ -520,9 +520,9 @@ def convert_2_df() -> pd.DataFrame:
     for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
  
         label =  get_label_name_from_id(labelled_text[LABEL_ID])
-        filename = get_file_from_id(labelled_text[LABEL_ID])[PROXY_STATEMENT_FILENAME]
+        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_FILENAME]
         name = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_NAME]
-        
+
         data_list.append({  'Label' : label,
                             'Proxy Statement' : name,
                             'Text' : labelled_text[LABELLED_TEXT_TEXT],
@@ -629,15 +629,15 @@ def get_data_set_path(data_set_file_name : str):
 
 def get_file_from_id(file_id : int) -> dict:
         
-    file_dict = {   PROXY_STATEMENT_FILENAME : 'Unknown', 
-                    PROXY_STATEMENT_FILE_ID : -1,
-                    PROXY_STATEMENT_NAME : 'Unknown'}
+    return_file_dict = {PROXY_STATEMENT_FILENAME : 'Unknown', 
+                        PROXY_STATEMENT_FILE_ID : -1,
+                        PROXY_STATEMENT_NAME : 'Unknown'}
     
     for file_dict in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS]:
         if file_dict[PROXY_STATEMENT_FILE_ID] == file_id:
-            file_dict = file_dict
+            return_file_dict = file_dict
 
-    return file_dict
+    return return_file_dict
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
