@@ -39,7 +39,7 @@ def update_data_set_cb(update_data_frame : pd.DataFrame):
     for row in update_data_frame.iloc:
         if row['Delete']:
             continue
-                  
+        
         new_labelled_texts.append({ 'id': int(row['id']),
                                     'label-id': get_label_id_from_name(row['Label']),
                                     'file-id': get_file_id_from_name(row['Filename']),
@@ -67,9 +67,10 @@ def save_and_review_data_set_page():
         edited_df = st.data_editor(convert_2_df(), 
                                    use_container_width=True,
                                    hide_index=True,
-                                   disabled=["Filename"],
+                                   disabled=["Proxy Statement"],
                                    column_config={"Label" : st.column_config.SelectboxColumn("Label", options=get_label_names()),
-                                                  'id': None})
+                                                  'id': None,
+                                                  'Filename': None})
         
         st.button(label='Update',
                   on_click=update_data_set_cb,

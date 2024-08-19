@@ -33,8 +33,6 @@ def get_active_proxy_statement_pdf_file_name() -> str:
 def update_displayed_pdf() -> None:
 
     pdf_file_name = get_active_proxy_statement_pdf_file_name()
-
-    print(f'Active pdf: {pdf_file_name}')
     
     # create a tmp file for it proxy statement which will be highlighted      
     if create_tmp_file():

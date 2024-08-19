@@ -161,6 +161,7 @@ def initialize_session_state():
                                           
 def generate_proxy_statement_manifest():
     
+    # only run this one time.
     if not st.session_state[PROXY_STATEMENTS_KEY]:
         
         st.session_state[PROXY_STATEMENTS_KEY] = {}
@@ -172,11 +173,12 @@ def generate_proxy_statement_manifest():
             
             for base_name in list_of_proxy_names:          
                 proxy_dir_path = os.path.join(dir_path, base_name)
+                
                 if base_name not in st.session_state[PROXY_STATEMENTS_KEY]:
                     st.session_state[PROXY_STATEMENTS_KEY][base_name] = proxy_dir_path
                 else:
                     print(f'Duplicate Proxy statement found: {proxy_dir_path}')                      
-           
+          
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Helper Functions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -304,10 +306,14 @@ def get_active_proxy_statement_name() -> str:
 
 def get_file_id_from_name(filename : str) -> int:
     
+    file_id = -1
+    
     for file in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS]:
         if file[PROXY_STATEMENT_FILENAME] == filename:
-            return file[PROXY_STATEMENT_FILE_ID]
+            file_id= file[PROXY_STATEMENT_FILE_ID]
     
+    return file_id
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_active_classifier_name():
@@ -450,9 +456,10 @@ def create_tmp_file():
     try:
         shutil.copy(src_path, dst_path)
         return True
-    except FileNotFoundError:  
-              
+    except FileNotFoundError:             
         st.error(f'[ERRC1] Unable to create tmp files at path: {dst_path}')
+        st.error(f'Source: {src_path}')
+        st.error(f'Destination: {dst_path}')
         return False
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -511,15 +518,17 @@ def convert_2_df() -> pd.DataFrame:
     data_list = []
     
     for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
-                    
+ 
         label =  get_label_name_from_id(labelled_text[LABEL_ID])
-        filename = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_NAME]
+        filename = get_file_from_id(labelled_text[LABEL_ID])[PROXY_STATEMENT_FILENAME]
+        name = get_file_from_id(labelled_text[PROXY_STATEMENT_FILE_ID])[PROXY_STATEMENT_NAME]
         
         data_list.append({  'Label' : label,
-                            'Filename' : filename,
+                            'Proxy Statement' : name,
                             'Text' : labelled_text[LABELLED_TEXT_TEXT],
                             'Delete' : False,
-                            'id': labelled_text[LABELLED_TEXT_ID]})        
+                            'id': labelled_text[LABELLED_TEXT_ID],
+                            'Filename': filename})        
     
     return pd.DataFrame(data_list)
 
@@ -620,11 +629,15 @@ def get_data_set_path(data_set_file_name : str):
 
 def get_file_from_id(file_id : int) -> dict:
         
+    file_dict = {   PROXY_STATEMENT_FILENAME : 'Unknown', 
+                    PROXY_STATEMENT_FILE_ID : -1,
+                    PROXY_STATEMENT_NAME : 'Unknown'}
+    
     for file_dict in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_PROXY_STATEMENTS]:
         if file_dict[PROXY_STATEMENT_FILE_ID] == file_id:
-            return file_dict
+            file_dict = file_dict
 
-    return {PROXY_STATEMENT_FILENAME : 'Unknown', PROXY_STATEMENT_FILE_ID : -1}
+    return file_dict
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

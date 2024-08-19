@@ -57,7 +57,7 @@ def main():
 
     for pdf_file in pdf_files:
         input_pdf = f"{SEARCH_DIRT}/{pdf_file}"
-        output_folder = f"{SEARCH_DIRT}/{pdf_file.split('.')[0]}-split"
+        output_folder = f"{SEARCH_DIRT}/{pdf_file.split('.')[0]}"
         
         create_directory(output_folder)        
         
