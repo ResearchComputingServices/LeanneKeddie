@@ -72,8 +72,9 @@ TMP_USER_DATA_PATH = 'tmp'
 HIGHLIGHTED_PDF = 'highlighed_'
 JSON_EXT = '.json'
 
-#LIST_OF_PROXY_STATEMEMT_YEARS = ['2016','2017','2018','2019','2020','2021','2022']
-LIST_OF_PROXY_STATEMEMT_YEARS = ['test']
+LIST_OF_PROXY_STATEMEMT_YEARS = ['2016','2017','2018','2019','2020','2021','2022']
+#LIST_OF_PROXY_STATEMEMT_YEARS = ['2017','2018','2019']
+#LIST_OF_PROXY_STATEMEMT_YEARS = ['test']
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Session State Keys
@@ -395,10 +396,11 @@ def get_proxy_statements_in_dir(directory_path : str) -> list:
     
     directory_names = []
 
-    for item in os.listdir(directory_path):
-        item_path = os.path.join(directory_path, item)
-        if os.path.isdir(item_path):
-            directory_names.append(item)
+    if os.path.exists(directory_path):
+        for item in os.listdir(directory_path):
+            item_path = os.path.join(directory_path, item)
+            if os.path.isdir(item_path):
+                directory_names.append(item)
 
     return directory_names
     

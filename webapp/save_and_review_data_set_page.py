@@ -58,7 +58,9 @@ def save_and_review_data_set_page():
     
         name_col, type_cal = st.sidebar.columns([2,1])
         
-        file_name = name_col.text_input('Filename')
+        file_name = name_col.text_input('Filename',
+                                        value=get_active_data_set_name())
+        
         save_type = type_cal.radio( 'Save Type',
                                     options = ['private', 'public'])
         st.sidebar.button(  'Save',

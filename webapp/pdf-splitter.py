@@ -52,7 +52,7 @@ def create_directory(directory):
 
 def main():
 
-    SEARCH_DIRT = ".proxy-statements/pdfs/test"
+    SEARCH_DIRT = ".proxy-statements/pdfs/2019"
     pdf_files = get_pdf_files(SEARCH_DIRT)
 
     for pdf_file in pdf_files:
