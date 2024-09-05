@@ -13,7 +13,7 @@ class PDFHighlighter():
     """
 	def __init__(self, 
 					doc_path : Path):
-      	"""
+		"""
         Initializes the PDFHighlighter with a path to a PDF document.
 
         Parameters:
@@ -22,38 +22,38 @@ class PDFHighlighter():
         
 		self.file_path = doc_path
 		self.doc = fitz.open(doc_path)
-		
-	def highlight(	self, 
-					phrase : str,
-     				colour : tuple) -> None:
-     	"""
-        Searches for and highlights all occurrences of a phrase in the document.
+			
+	def highlight(self, 
+				  phrase: str,
+				  colour: tuple) -> None:
+		"""
+		Searches for and highlights all occurrences of a phrase in the document.
 
-        Parameters:
-            phrase (str): The phrase to search for in the document.
-            colour (tuple): The color to use for highlighting, specified as an RGB tuple.
-        """
+		Parameters:
+			phrase (str): The phrase to search for in the document.
+			colour (tuple): The color to use for highlighting, specified as an RGB tuple.
+		"""
 
 		for page in self.doc:
 			for rect in page.search_for(phrase):	
 				polygons = self.rect_2_poly(rect)
-	
+
 				rects_merged = unary_union(polygons)
 				points = list(rects_merged.exterior.coords)
 				self.draw_shape(page, points, colour)
-   
+
 	def draw_shape(	self, 
 					page : fitz.Page,
 					points : list,
-               		color: tuple):
-     	"""	
-        Draws a polyline shape on a specified page.
+					color: tuple):
+		"""	
+		Draws a polyline shape on a specified page.
 
-        Parameters:
-            page (fitz.Page): The page object where the shape will be drawn.
-            points (list): A list of points defining the polyline shape.
-            color (tuple): The color to fill the shape, specified as an RGB tuple.
-        """
+		Parameters:
+			page (fitz.Page): The page object where the shape will be drawn.
+			points (list): A list of points defining the polyline shape.
+			color (tuple): The color to fill the shape, specified as an RGB tuple.
+		"""
 		shape = page.new_shape()
 		
 		shape.draw_polyline(points)

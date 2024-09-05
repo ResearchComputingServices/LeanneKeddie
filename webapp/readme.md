@@ -36,7 +36,14 @@ To set up and run the WebApp locally, follow these steps:
     pip install -r requirements.txt
     ```
 
-    Follow the installation instructios for the [Athabaska package](https://github.com/ResearchComputingServices/Athabasca).
+    The [Athabaska package](https://github.com/ResearchComputingServices/Athabasca) must be installed separately. To 
+    do so run the following commands 
+
+    ```
+    gh repo clone ResearchComputingServices/Athabasca
+    cd Athabasca
+    pip install -e .
+    ```
 
 # Running the DEF 14A Analysis WebApp
 

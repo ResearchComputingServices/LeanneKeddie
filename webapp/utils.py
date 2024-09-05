@@ -180,7 +180,8 @@ def initialize_session_state():
         st.session_state[ACTIVE_PROXY_STATEMENT_NAME_KEY] = None
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  """
+def generate_proxy_statement_manifest():
+    """
     Generates a manifest of proxy statements.
 
     This function generates a manifest of proxy statements by iterating through the list of proxy statement years
@@ -193,8 +194,6 @@ def initialize_session_state():
     Returns:
     None
     """                                      
-def generate_proxy_statement_manifest():
-    
     # only run this one time.
     if not st.session_state[PROXY_STATEMENTS_KEY]:
         
