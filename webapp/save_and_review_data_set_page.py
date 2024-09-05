@@ -6,7 +6,18 @@ from utils import *
 
 def save_session_cb(file_name : str,
                     save_type : str) -> None:
-    
+    """
+    Saves the current session data to a JSON file based on the specified save type.
+
+    This function allows saving the active dataset from the session state to a JSON file. The file can be saved in a
+    public directory for general access or in a private directory specific to the user, based on the save type
+    specified. It provides feedback through the sidebar on the success or failure of the save operation.
+
+    Parameters:
+        file_name (str): The name of the file to save the data to. If the file name is empty, a warning is shown.
+        save_type (str): The type of save operation ('private' or other). If 'private', the file is saved in a user-
+                         specific directory; otherwise, it is saved in a public directory.
+    """
     if file_name == '':
         st.sidebar.warning(f'Filename required.')
     else:
@@ -33,7 +44,20 @@ def save_session_cb(file_name : str,
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def update_data_set_cb(update_data_frame : pd.DataFrame):
-        
+    """
+    Updates the active dataset with new labeled texts from a given DataFrame.
+
+    This function iterates through each row of the provided DataFrame, constructing a new list of labeled texts based
+    on the data. Rows marked for deletion are skipped. Each remaining row is transformed into a dictionary containing
+    the text's ID, label ID, file ID, and text content, which are then appended to a new list. This list replaces the
+    existing list of labeled texts in the active dataset stored in the session state.
+
+    Parameters:
+        update_data_frame (pd.DataFrame): A DataFrame containing the updated dataset information. Expected columns
+                                          include 'Delete', 'id', 'Label', 'Filename', and 'Text'. The 'Delete' column
+                                          is a boolean indicating whether the row should be ignored.
+
+    """
     new_labelled_texts = []
 
     for row in update_data_frame.iloc:
@@ -51,6 +75,22 @@ def update_data_set_cb(update_data_frame : pd.DataFrame):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def save_and_review_data_set_page():
+    """
+    Displays a page for saving and reviewing the active dataset within a Streamlit application.
+
+    This function provides an interface for users to save the current active dataset and review its contents. It
+    includes input fields for specifying the file name and save type (private or public), and displays the dataset in
+    an editable table format. Users can save the dataset with the specified settings and update the dataset based on
+    modifications made in the table.
+
+    The function first checks if there is an active dataset. If not, it displays an error message. Otherwise, it
+    proceeds to render the save and review interface, including:
+    - A text input for the file name, pre-filled with the active dataset's name.
+    - A radio button selection for the save type (private or public).
+    - A 'Save' button that triggers the saving of the dataset.
+    - An editable table displaying the dataset, allowing for modifications.
+    - An 'Update' button to apply changes made in the table to the active dataset.
+    """
     
     if st.session_state[ACTIVE_DATA_SET_KEY] == None:
         st.error('No active Data Set')

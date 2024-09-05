@@ -3,4 +3,4 @@ headless = true
 port = 8502
 
 [browser]
-serverAddress = "hall-1000"
+serverAddress = "hal-1000"

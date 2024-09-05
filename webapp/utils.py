@@ -73,8 +73,6 @@ HIGHLIGHTED_PDF = 'highlighed_'
 JSON_EXT = '.json'
 
 LIST_OF_PROXY_STATEMEMT_YEARS = ['2016','2017','2018','2019','2020','2021','2022']
-#LIST_OF_PROXY_STATEMEMT_YEARS = ['2017','2018','2019']
-#LIST_OF_PROXY_STATEMEMT_YEARS = ['test']
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Session State Keys
@@ -91,6 +89,7 @@ TRAIN_FIGURE_KEY = 'TRAIN_FIGURE_KEY'
 
 # dictionary of proxy statements {base-name : paths}
 PROXY_STATEMENTS_KEY = 'PROXY_STATEMENTS_KEY'                   
+
 # dictionary of active data set
 ACTIVE_DATA_SET_KEY = 'ACTIVE_DATA_SET_KEY'                     
 
@@ -104,7 +103,32 @@ ACTIVE_PROXY_STATEMENT_NAME_KEY = 'ACTIVE_PROXY_STATEMENT_NAME_KEY'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def initialize_session_state():
+    """
+    Initializes the session state with default values for various keys.
 
+    This function checks if each key is present in the session state and if not, adds it with a default value.
+    The keys and their default values are as follows:
+    - LOGGED_IN_KEY: False
+    - USER_CRED_KEY: None
+    - PDF_SELECTED_KEY: False
+    - PDF_HIGHLIGHTED_FILE_PATH_KEY: None
+    - PDF_HIGHLIGHTER_KEY: None
+    - LABELLED_SENTENCES_KEY: {}
+    - ACTIVE_DATA_SET_KEY: None
+    - ACTIVE_PROXY_STATEMENT_KEY: {
+            PROXY_STATEMENT_FILENAME: '',
+            PROXY_STATEMENT_FILE_ID: -1,
+            PROXY_STATEMENT_NAME: ''
+        }
+    - ACTIVE_LABEL_KEY: None
+    - TRAIN_TEST_RESULTS_KEY: None
+    - TRAIN_FIGURE_KEY: None
+    - ACTIVE_CLASSIFIER_KEY: None
+    - ACTIVE_RESULTS_KEY: None
+    - PROXY_STATEMENTS_KEY: None
+    - ACTIVE_PAGE_NUMBER_KEY: 0
+    - ACTIVE_PROXY_STATEMENT_NAME_KEY: None
+    """
     if LOGGED_IN_KEY not in st.session_state:
         st.session_state[LOGGED_IN_KEY] = False
 
@@ -155,11 +179,20 @@ def initialize_session_state():
     if ACTIVE_PROXY_STATEMENT_NAME_KEY not in st.session_state:
         st.session_state[ACTIVE_PROXY_STATEMENT_NAME_KEY] = None
 
-# if  not in st.session_state:
-#   st.session_state[] =
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                          
+  """
+    Generates a manifest of proxy statements.
+
+    This function generates a manifest of proxy statements by iterating through the list of proxy statement years
+    and the corresponding directories. It populates the session state with the proxy statement manifest, which is a
+    dictionary containing the base names of the proxy statements as keys and their respective directory paths as values.
+
+    Note:
+    - This function should only be run once to avoid duplicate entries in the manifest.
+
+    Returns:
+    None
+    """                                      
 def generate_proxy_statement_manifest():
     
     # only run this one time.
@@ -220,7 +253,16 @@ def get_active_label_colour():
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_active_label_colour_image():
-   
+    """
+    Generates a 30x30 RGB image block filled with the active label's colour.
+
+    This function checks the current session state for an active label's colour. If an active label is set,
+    it retrieves its colour. Otherwise, it defaults to black (0,0,0). It then creates a 30x30 numpy array
+    of unsigned 8-bit integers, filled with the active label's colour, and returns this array as an RGB image block.
+
+    Returns:
+        numpy.ndarray: A 30x30x3 numpy array representing an RGB image block of the active label's colour.
+    """
     active_colour = (0,0,0) 
     if st.session_state[ACTIVE_LABEL_KEY]:
         active_colour = st.session_state[ACTIVE_LABEL_KEY][LABEL_COLOUR]
@@ -334,6 +376,21 @@ def get_user_cred() -> str:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def convert_2_data_set() -> DataSet:
+    """his function converts the active dataset stored in the session state into a `DataSet` object.
+
+    The function performs the following steps:
+    1. Initializes a new `DataSet` object.
+    2. Iterates over the labels in the active dataset, adding each label's name and ID to the `DataSet` object's labels dictionary.
+    3. Prepares a list of labeled texts by iterating over the labeled texts in the active dataset. For each labeled text, it retrieves the label name using the label ID and appends a pair consisting of the label name and the text to the list.
+    4. Calls the `read_data_list` method of the `DataSet` object to populate it with the prepared list of labeled texts.
+    5. Returns the populated `DataSet` object.
+
+    Parameters:
+    - None
+
+    Returns:
+    - `DataSet`: An object of the `DataSet` class populated with labels and labeled texts from the active dataset in the session state.
+    """ 
     
     data_set = DataSet()
     
@@ -439,7 +496,20 @@ def get_proxy_statement_names(requested_filter : str) -> list:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def create_tmp_file():
-    
+    """
+    Creates a temporary copy of a specific PDF page file based on the current active page and proxy statement.
+
+    This function generates a file path for a PDF page using the current active page number and the active proxy statement
+    name from the session state. It then attempts to copy this PDF page file to a temporary directory for highlighted
+    PDFs. The destination path in the temporary directory is constructed using the active proxy statement name and a
+    predefined prefix for highlighted PDF files.
+
+    The function updates the session state with the path to the copied (highlighted) PDF file. If the source file is not
+    found or the copy operation fails, it displays an error message in the Streamlit app.
+
+    Returns:
+        bool: True if the file was successfully copied to the temporary directory, False otherwise.
+    """
     num_leading_zeros = 4 - len(str(st.session_state[ACTIVE_PAGE_NUMBER_KEY] + 1))
     page_num = st.session_state[ACTIVE_PAGE_NUMBER_KEY]
    
@@ -517,6 +587,18 @@ def generate_file_id() -> int:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def convert_2_df() -> pd.DataFrame:
+    """
+    Converts labeled text data from the session state into a pandas DataFrame.
+
+    This function iterates over labeled text entries stored in the session state under a specific key. For each entry,
+    it retrieves associated metadata such as the label name, proxy statement file name, and proxy statement name using
+    predefined functions. Each entry's data, along with additional metadata, is compiled into a dictionary and added to
+    a list. This list is then converted into a pandas DataFrame, which is returned.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing columns for label, proxy statement name, text content, a flag for deletion,
+                      an ID for the labeled text, and the filename of the proxy statement.
+    """
     data_list = []
     
     for labelled_text in st.session_state[ACTIVE_DATA_SET_KEY][DATA_SET_LABELLED_TEXT]:
@@ -559,7 +641,16 @@ def check_for_previous_highlights(pdf_file_name : str) -> bool:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def add_proxy_to_data_set(pdf_file_name : str) -> None:
-    
+    """
+    Adds a new proxy statement to the active dataset in the session state.
+
+    This function generates a unique file ID for the new proxy statement and constructs a dictionary containing
+    the proxy statement's filename, file ID, and name. This dictionary is then added to the active dataset within
+    the session state under a specific key for proxy statements.
+
+    Parameters:
+        pdf_file_name (str): The filename of the new proxy statement to be added.
+    """
     file_id = generate_file_id()
     
     new_proxy_statement_dict = {PROXY_STATEMENT_FILENAME : pdf_file_name,
@@ -573,7 +664,17 @@ def add_proxy_to_data_set(pdf_file_name : str) -> None:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_data_set_files():
-    
+    """
+    Retrieves a list of dataset filenames from both the user's private dataset directory and a public dataset directory.
+
+    This function constructs the path to the user's private dataset directory using predefined paths and the user's
+    credentials from the session state. It then lists all JSON files in this directory and the public dataset directory,
+    extracting just the filenames. The function combines these lists and returns the combined list of filenames.
+
+    Returns:
+        list: A list of filenames (strings) of datasets found in both the user's private dataset directory and the public dataset directory.
+
+    """
     user_data_sets_path = os.path.join( USER_DATA_PATH,
                                         st.session_state[USER_CRED_KEY],
                                         PRIVATE_DATA_SET_PATH)
@@ -583,8 +684,6 @@ def get_data_set_files():
     public_data_sets = [os.path.basename(x) for x in glob.glob(PUBLIC_DATA_PATH+'/*.json')]
        
     return user_data_sets + public_data_sets
-
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -601,7 +700,15 @@ def get_labelled_text_from_file_id(file_id : int) -> list:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def apply_previous_highlights() -> None:
-    
+    """
+    Applies previously saved text highlights to the active proxy statement PDF based on its file ID.
+
+    This function retrieves the file ID of the active proxy statement from the session state. It then fetches all
+    labelled texts associated with this file ID. For each labelled text, it retrieves the label color and the text
+    content. Using these, it calls the highlight method on the PDF highlighter object stored in the session state,
+    passing the text and its corresponding label color. After highlighting all the labelled texts, it saves the
+    changes to the PDF by calling the save method on the PDF highlighter object.
+    """
     file_id = st.session_state[ACTIVE_PROXY_STATEMENT_KEY][PROXY_STATEMENT_FILE_ID]
     labelled_texts = get_labelled_text_from_file_id(file_id)
     
@@ -676,8 +783,27 @@ def get_proxy_statement_json_files() -> list:
 
 def analyze_json_file(json_file_path : str,
                       section_types : list) -> dict:
-    
-    # get the load classifier
+    """
+    This function analyzes a JSON file containing document text, filtering and classifying text based on specified section types.
+
+    Parameters:
+        json_file_path (str): The file path of the JSON file to be analyzed.
+        section_types (list): A list of section types to filter the text blocks before classification.
+
+    Returns:
+        dict: A dictionary containing the filename and the results of the classification.
+
+    The function performs the following steps:
+    1. Loads a classifier from the session state.
+    2. Initializes an empty dictionary to store the results.
+    3. Loads the JSON file specified by `json_file_path` and extracts its contents.
+    4. Stores the basename of the extracted document's file path in the results dictionary.
+    5. Iterates through the pages and text blocks of the extracted document, filtering by the specified section types.
+    6. For each sentence in the filtered text blocks, appends it to a list for classification, marking it as 'UNKNOWN'.
+    7. If there are sentences to classify, uses the classifier to classify the list of sentences.
+    8. Returns the results dictionary containing the filename and the classification results.
+        """
+    # get the loaded classifier
     c = st.session_state[ACTIVE_CLASSIFIER_KEY]
     
     # results of classification will be stored in this dict
@@ -705,7 +831,22 @@ def analyze_json_file(json_file_path : str,
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def search_active_data_set(list_name,key, value):
-    
+    """
+    Searches for items in a specified list within the active dataset that match a given key-value pair.
+
+    This function iterates over a list specified by `list_name` within the active dataset stored in the session state.
+    It filters items where the value associated with `key` matches the specified `value`. The function returns a list
+    of all matching items.
+
+    Parameters:
+        list_name (str): The name of the list within the active dataset to search through.
+        key (str): The key to match in each item of the list.
+        value (any): The value to match for the specified key in each item.
+
+    Returns:
+        list: A list of items from the specified list in the active dataset where the item's value for the specified
+              key matches the given value.
+    """
     search_results = []
     
     if st.session_state[ACTIVE_DATA_SET_KEY]:    
@@ -725,6 +866,14 @@ def get_result(selected_proxy_statement_result : str) -> dict:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def display_classifier() -> None:
+    """
+    Displays the classifier's training results and figure in a two-column layout using Streamlit.
+
+    This function creates a two-column layout in a Streamlit app. In one column, it displays a table of the classifier's
+    training results. In the other column, it displays a figure (e.g., a plot) related to the classifier's training.
+    If either the training results or the figure is not available, it displays an error message in the respective column.
+    """
+    
     col_fig, col_table = st.columns([1,1])
         
     if st.session_state[TRAIN_TEST_RESULTS_KEY] != None:    

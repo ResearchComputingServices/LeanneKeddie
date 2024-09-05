@@ -17,18 +17,37 @@ from view_results_page import view_results_page
 # initialize the page
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-
-# streamlit_root_logger = logging.getLogger(__name__)
-# streamlit_root_logger.log(level=logging.INFO, msg=f'name: {__name__}')
-
-# streamlit_root_logger = logging.getLogger(st.__name__)
-# if not streamlit_root_logger.hasHandlers():
-#      streamlit_root_logger.log(level=logging.INFO, msg='App (re)started!')
-
-
 def main():
+    """
+    The main entry point for the Definitive A Corporate Proxy Statement Analysis Tool.
 
+    This function initializes the session state, generates a proxy statement manifest, and sets up the Streamlit page
+    configuration. It then constructs the sidebar for navigation, displaying the current user credentials, the active
+    classifier name, and the active dataset name. The user can navigate through different pages of the application
+    depending on their selection from the sidebar radio buttons.
+
+    The function performs the following actions:
+    1. Initializes the session state to store application-wide data.
+    2. Generates a manifest of proxy statements for analysis.
+    3. Sets the Streamlit page configuration with a title and layout.
+    4. Constructs the sidebar for navigation, including:
+       - Display of the current user credentials.
+       - Display of the active classifier name.
+       - Display of the active dataset name.
+       - A radio button selection for navigating to different pages of the application.
+    5. Based on the user's page selection, renders the corresponding page. The options include:
+       - 'Home': Renders the home page of the application.
+       - 'Create / Load Data Set': Allows the user to create a new dataset or load an existing one.
+       - 'Add Data': Provides an interface for adding new data to the dataset.
+       - 'Save / Review': Enables saving the current dataset and reviewing saved datasets.
+       - 'Train': Offers tools for training the classifier on the dataset.
+       - 'Classify': Allows for the classification of new data using the trained classifier.
+       - 'View Results': Displays the results of data classification.
+    6. Ensures that navigation beyond the home page is disabled unless the user is logged in.
+
+    This function orchestrates the overall flow of the application, ensuring that users can navigate through different
+    functionalities based on their authentication status and their intended actions within the tool.
+    """
     initialize_session_state()
     generate_proxy_statement_manifest()
     

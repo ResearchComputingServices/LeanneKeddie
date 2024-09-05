@@ -11,9 +11,24 @@ from create_load_data_set_page import load_file_cb
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
-
 def save_classifier_cb(classifier_name : str,
                        save_type : str) -> None:
+    """
+    Saves the currently active classifier and its training results to a specified location.
+
+    This function is responsible for saving the active classifier's figure and training results to a JSON file. The
+    destination of the save operation can be either a public directory for general access or a private directory
+    specific to the user, based on the save type specified. The function first checks if there is an active classifier
+    in the session state. If so, it proceeds to save the classifier's figure as a JSON file and the training results in
+    another JSON file. These files are saved in a temporary directory specific to the user, which is then copied to
+    the final destination based on the save type.
+
+    Parameters:
+        classifier_name (str): The name to assign to the saved classifier. This name is used as the directory name
+                               where the classifier and its results are stored.
+        save_type (str): The type of save operation ('private' or other). If 'private', the classifier is saved in a
+                         user-specific directory; otherwise, it is saved in a public directory.
+    """
     
     # if the classisifer exsits
     if st.session_state[ACTIVE_CLASSIFIER_KEY]:
@@ -40,7 +55,21 @@ def train_classifier_cb(classifier_name : str,
                         selected_data_set_file : str,
                         training_fraction : float,
                         num_finetune_corr : int) -> None:
-    
+    """
+    Trains a classifier with the specified parameters and updates the session state with the results.
+
+    This function orchestrates the process of training a text classifier based on a selected model and dataset. It
+    involves loading the dataset, optionally fine-tuning the model, training the classifier, and saving the trained
+    classifier and its results. The function also updates the session state with the training/test results, the
+    interactive plot of the classifier, and marks the classifier as the active classifier.
+
+    Parameters:
+        classifier_name (str): The name to assign to the trained classifier.
+        user_selected_model (str): The path to the pre-trained language model to use as the base for training.
+        selected_data_set_file (str): The file name of the dataset to load for training and testing.
+        training_fraction (float): The fraction of the dataset to use for training (the rest is used for testing).
+        num_finetune_corr (int): The number of corrections to apply during fine-tuning. If 0, no fine-tuning is performed.
+    """
     # remember to load the data set file into the sessoin state
     load_file_cb(selected_data_set_file)
     
@@ -82,7 +111,25 @@ def train_classifier_cb(classifier_name : str,
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def train_page():
-    
+    """
+    Renders a page in a Streamlit app for training a text classifier.
+
+    This function creates a user interface for selecting a pre-trained model, dataset file, training fraction, and
+    fine-tuning level for training a text classifier. It also provides input fields for naming the classifier and
+    triggers the training process. After training, options to save the trained classifier are presented.
+
+    The page layout includes:
+    - A selection for a pre-trained model from a predefined list.
+    - A dropdown to select a dataset file from available files.
+    - A slider to select the fraction of the dataset to be used for training.
+    - A slider to select the level of fine-tuning to apply to the model.
+    - A text input for specifying the name of the classifier.
+    - A 'Train' button to start the training process with the specified parameters.
+    - A popover for saving the trained classifier with options to save as 'private' or 'public'.
+
+    The 'Train' button is disabled until both a classifier name and a dataset file are selected. The 'Save' options
+    are only enabled if there is an active classifier and a name has been specified for it.
+    """
     pretrain_model_options = ['all-MiniLM-L6-v2',
                               'nli-distilroberta-base-v2',
                               'paraphrase-MiniLM-L6-v2']

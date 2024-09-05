@@ -1,83 +1,76 @@
-# Dictionaries used in the WebApp
 
-## Active Data Set Dictionary
+# DEF 14A Analysis WebApp
 
-The Active Data Set Dictionary contains the data set currently being
-worked on by the user. It is stored in the session_state with the key
-ACTIVE_DATA_SET_KEY.
+This tool enables supervised topic modelling of form DEF 14A (Definitive Proxy Statement) filed by S&P500 corportations between the years of 2016 and 2022.
 
-It contains:
-1. List of Proxy Statement dicts (key: DATA_SET_PROXY_STATEMENTS)
-2. List of Label dicts (key: DATA_SET_LABELS)
-3. List of Labelled-Text dicts (key: DATA_SET_LABELLED_TEXT)
-4. boolean 'initialized' (key: DATA_SET_INITIALIZED)
+# Installation Instructions
 
-### List of Proxy Statement Dicts
+To set up and run the WebApp locally, follow these steps:
 
-List of all the proxy statement pdfs which have been used to create this data set. This data is required for when a user loads a data set, so the
-proper passages can be highlighted.
+1. **Clone the Repository**
 
-Each dict contains:
-1. the base file name of the proxy statement pdf (key: PROXY_STATEMENT_FILENAME)
-2. a unique file id (key: PROXY_STATEMENT_FILE_ID)
+   First, clone the repository to your local machine using Git:
 
-### List of Label Dict
+    ```
+    gh repo clone ResearchComputingServices/LeanneKeddie
+    ```
 
-List of all the labels created by the user for this data set.
+2. **Create a Virtual Environment**
 
-Each dict contains:
-1. label name (key: LABEL_NAME)
-2. hex-code for highlighting colour (key: LABEL_COLOUR)
-3. unique label id (key: LABEL_ID)
+    It's recommended to create a virtual environment for Python projects. This keeps dependencies required by different projects separate. To create a virtual environment, run:
 
-### List of Labelled-Text Dicts
+    ```
+    python3 -m venv .venv
+    ```
 
-This is a list of all the passages which have been labelled by the user. 
+    Activate the virtual environment:
 
-Each dict contains:
-1. The text labelled (key: LABELLED_TEXT_TEXT)
-2. The proxy statement PDFs file id (key: LABELLED_TEXT_FILE_ID)
-3. The page on which the text is found (key: LABELLED_TEXT_PG_NUM)
-4. The label id (key: LABELLED_TEXT_LABEL_ID)
-5. A unique id (key: LABELLED_TEXT_ID)
+    ```
+    source .venv/bin/activate
+    ```
 
-## Active Results List
+3. **Install Dependencies**
 
-This list is populated when a classifier has been used to classify all the sentences contained in the proxy statements. One Result Dictionary is created  and added to the list for each proxy statement. 
+    Install all the required packages using pip:
+    ```
+    pip install -r requirements.txt
+    ```
 
-Each dictionary contains:
-1. the file name
+    Follow the installation instructios for the [Athabaska package](https://github.com/ResearchComputingServices/Athabasca).
 
+# Running the DEF 14A Analysis WebApp
 
-## ExtractedDocument Dictionary
+The webapp can be run local for debugging and development by executing the following command in the `webapp/` directory of the git repo:
 
-This dictionary contains all the text data which has been extracted from the proxy statement PDFs by the Nipigon DocumentAI package. 
+```
+streamlit run leanne-keddie-webapp.py
+```
 
-Each extracted document contains:
+The webapp was deployed on an Apache2 server. Two configuration files must be create as described below. One for the apache2 server and the other for streamlit. The wepapp will also need to be run using the command given above.
 
-1. The path to the ExtractedDocument file (key: EXTRACTED_DOCUMENT_FILE_PATH)
-2. A list of DocumentPage dictionaries (key: EXTRACTED_DOCUMENT_PAGES)
+The Apache2 virtual host used the following configuration file:
 
-### DocumentPage Dictionary
+```
+<VirtualHost *:80>
+   RewriteEngine On
 
-Each Document Page dict contains:
+   RewriteCond %{HTTP:Upgrade} =websocket
+   RewriteRule /(.*) ws://localhost:8502/$1 [P]
+   RewriteCond %{HTTP:Upgrade} !=websocket
+   RewriteRule /(.*) http://localhost:8502/$1 [P]
 
-1. A page numner (key: page_number)
-2. a list of document text block dictionaries (key: EXTRACTED_DOCUMENT_TEXT_BLOCKS)
+   ProxyPassReverse / http://localhost:8502
+</VirtualHost>
 
-### TextBlock Dictionary
+```
 
-Each TextBlock contains:
+A configuration file is also required in the `webapp/.streamlit` directory:
 
-1. A label assigned by Nipigon describing the type of text block (ie. paragrah-text, footer, header, section head, title, etc...) (key: EXTRACTED_DOCUMENT_TEXT_BLOCK_LABEL)
-2. A confidence value assigned by Nipigon (key: 'conf')
-3. A list of Sentence Dictionaries (key: EXTRACTED_DOCUMENT_TEXT_BLOCKS_SENTENCES)
+```
+[server]
+headless = true
+port = 8502
 
-### Sentence Dictionary
-
-Each sentence dictionary contains:
-
-1. The text of the sentence (key: EXTRACTED_DOCUMENT_TEXT_BLOCKS_SENTENCES_TEXT)
-2. A label (not used) (key : 'label')
-3. A confidence (not used) (key : 'conf')
-
+[browser]
+serverAddress = "eng-bucking-2gtx"
+```
