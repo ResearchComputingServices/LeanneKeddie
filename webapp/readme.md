@@ -50,6 +50,7 @@ To set up and run the WebApp locally, follow these steps:
 The webapp can be run local for debugging and development by executing the following command in the `webapp/` directory of the git repo:
 
 ```
+cd webapp
 streamlit run leanne-keddie-webapp.py
 ```
 

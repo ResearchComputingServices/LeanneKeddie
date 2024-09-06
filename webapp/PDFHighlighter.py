@@ -89,7 +89,7 @@ class PDFHighlighter():
             file_path (optional): The path to save the modified document. If not provided, the original document is
             updated.
         """
- 
+        
 		if not file_path:
 			file_path = self.file_path
 
