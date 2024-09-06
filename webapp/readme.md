@@ -12,7 +12,7 @@ To set up and run the WebApp locally, follow these steps:
    First, clone the repository to your local machine using Git:
 
     ```
-    gh repo clone ResearchComputingServices/LeanneKeddie
+    git clone ResearchComputingServices/LeanneKeddie
     ```
 
 2. **Create a Virtual Environment**
@@ -40,7 +40,7 @@ To set up and run the WebApp locally, follow these steps:
     do so run the following commands 
 
     ```
-    gh repo clone ResearchComputingServices/Athabasca
+    git clone ResearchComputingServices/Athabasca
     cd Athabasca
     pip install -e .
     ```
