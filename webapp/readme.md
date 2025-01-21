@@ -40,7 +40,7 @@ To set up and run the WebApp locally, follow these steps:
     do so run the following commands 
 
     ```
-    git clone ResearchComputingServices/Athabasca
+    gh repo clone ResearchComputingServices/Athabasca
     cd Athabasca
     pip install -e .
     ```
